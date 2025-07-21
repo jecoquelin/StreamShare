@@ -1,0 +1,33 @@
+# Node.js
+node_modules/
+front/node_modules/
+
+# .env files
+*.env
+front/.env.local
+back/.env
+
+# Logs
+*.log
+logs/
+
+# Python bytecode
+__pycache__/
+*.pyc
+back/__pycache__/
+
+# IDE configurations
+.idea/
+
+# Videos (si tu ne veux pas versionner les vidéos)
+videos/
+
+# Scripts temporaires
+scripts/*.tmp
+
+# Fichiers générés par Next.js (build, cache, etc.)
+front/.next/
+front/out/
+
+# Fichiers de build et de cache
+front/build/
