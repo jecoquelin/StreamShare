@@ -1,0 +1,25 @@
+services:
+  db:
+    image: postgres:13
+    container_name: db
+    environment:
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME:-dev_db}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - myflix-network
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "pg_isready",
+          "-U",
+          "${DATABASE_USER}",
+          "-d",
+          "${DATABASE_NAME}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5

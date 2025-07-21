@@ -1,0 +1,15 @@
+services:
+  nextjs:
+    build:
+      context: ../../front
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../../front:/app
+      - /app/node_modules
+      - ../tools/nginx/nginx.dev.conf:/etc/nginx/nginx.conf
+    networks:
+      - myflix-network
+    command: >
+      sh -c "nginx && npm run dev"

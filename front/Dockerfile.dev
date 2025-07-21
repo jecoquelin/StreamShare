@@ -1,0 +1,40 @@
+# Étape 1 : Builder Next.js
+FROM node:24-bullseye-slim AS builder
+WORKDIR /app
+
+# Copier les fichiers et installer les dépendances
+COPY ./package*.json ./
+RUN npm install
+
+# Copier le reste du code et builder l'app Next.js
+COPY . .
+RUN npm run build
+
+# Étape 2 : Serveur de Dev + Nginx pour HLS
+FROM node:24-bullseye-slim AS dev
+WORKDIR /app
+
+# Installer les dépendances
+COPY ./package*.json ./
+RUN npm install
+
+# Copier le code source
+COPY . .
+
+# Installer et configurer Nginx pour HLS
+# RUN apt install --no-cache nginx
+# Installer et configurer Nginx pour HLS
+RUN apt-get update && \
+    apt-get install -y nginx && \
+    rm -rf /var/lib/apt/lists/*
+
+# Configurer Nginx pour servir les fichiers HLS (playlist.m3u8 et .ts)
+RUN mkdir -p /var/www/hls
+# COPY /docker/tools/nginx/nginx.dev.conf /etc/nginx/nginx.conf
+
+# Exposer les ports : 3000 pour Next.js et 8080 pour Nginx (HLS)
+EXPOSE 3000 8080
+
+# Lancer Next.js et Nginx en parallèle
+CMD ["sh"]
+# sh -c "nginx && npm run dev"

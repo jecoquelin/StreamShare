@@ -1,0 +1,11 @@
+[
+    {
+        "id": 1,
+        "title": "Inception",
+        "director": "Christopher Nolan",
+        "release_year": 2010,
+        "genre": "Science Fiction",
+        "rating": 8.8,
+        "description": "A skilled thief is given a chance at redemption if he can successfully perform inception, the act of planting an idea into someone's subconscious."
+    }
+]

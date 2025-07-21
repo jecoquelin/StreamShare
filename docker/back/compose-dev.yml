@@ -1,0 +1,46 @@
+services:
+  migration:
+    container_name: migration
+    build:
+      context: ../../back
+      dockerfile: Dockerfile.dev
+    command: >
+      bash -c "/wait-for-it.sh db:5432 --timeout=30 --strict -- && rm alembic/versions/*.py && alembic revision --autogenerate -m 'auto-migration' && alembic upgrade head && python db/seed.py"
+    environment:
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - ALEMBIC_DATABASE_URL=postgresql+psycopg2://${DATABASE_USER}:${DATABASE_PASSWORD}@db:5432/${DATABASE_NAME}
+      - DATABASE_URL=postgresql+psycopg2://${DATABASE_USER}:${DATABASE_PASSWORD}@db:5432/${DATABASE_NAME}
+      - PYTHONPATH=/app
+    volumes:
+      - ../../back:/app
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+    networks:
+      - myflix-network
+  back:
+    container_name: back
+    build:
+      context: ../../back
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8001:8000"
+    environment:
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - ALEMBIC_DATABASE_URL=postgresql+psycopg2://${DATABASE_USER}:${DATABASE_PASSWORD}@db:5432/${DATABASE_NAME}
+      - DATABASE_URL=postgresql+psycopg2://${DATABASE_USER}:${DATABASE_PASSWORD}@db:5432/${DATABASE_NAME}
+      - PYTHONPATH=/app
+    volumes:
+      - ../../back:/app
+    depends_on:
+      migration:
+        condition: service_completed_successfully
+    command: >
+      bash -c "uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+    networks:
+      - myflix-network

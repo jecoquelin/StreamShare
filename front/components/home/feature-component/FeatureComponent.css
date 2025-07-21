@@ -1,0 +1,25 @@
+.feature {
+    background-color: #FFF;
+}
+
+.title {
+    color : black;
+    font-size: 2rem;
+    padding: 30px;
+}
+
+.subtitle {
+    color : black;
+    width: 75%;
+    font-size: 1.3rem;
+    padding: 30px;
+}
+
+.feature-container{
+    padding-top: 30px;
+    width: 75%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}

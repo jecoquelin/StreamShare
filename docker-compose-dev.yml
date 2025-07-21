@@ -1,0 +1,74 @@
+# services:
+#   nextjs:
+#     build:
+#       context: .
+#       dockerfile: ./docker/Dockerfile.dev
+#     ports:
+#       - "3000:3000"
+#     volumes:
+#       - ./front:/app
+#       - /app/node_modules
+#     networks:
+#       - myflix-network
+
+#   fastapi:
+#     build:
+#       context: .
+#       dockerfile: ./docker/Dockerfile.dev.back
+#     ports:
+#       - "3001:8000"
+#     volumes:
+#       - ./back:/app
+#     networks:
+#       - myflix-network
+  
+#   pgadmin:
+#     image: dpage/pgadmin4
+#     environment:
+#       PGADMIN_DEFAULT_EMAIL: test@test.com
+#       PGADMIN_DEFAULT_PASSWORD: test
+#     ports:
+#       - "3002:80"
+#     networks:
+#       - myflix-network
+
+#   postgres:
+#     image: postgres:alpine
+#     environment:
+#       POSTGRES_USER: myflix
+#       POSTGRES_PASSWORD: myflix
+#       POSTGRES_DB: myflix
+#     ports:
+#       - "5432:5432"
+#     volumes:
+#       - pgdata:/var/lib/postgresql/data
+#     networks:
+#       - myflix-network
+
+#   nginx:
+#     image: nginx:alpine
+#     ports:
+#       - "8080:8080"
+#     volumes:
+#       - ./videos:/var/www/hls
+#       - ./nginx/nginx.dev.conf:/etc/nginx/nginx.conf
+#     networks:
+#       - myflix-network
+
+
+# networks:
+#   myflix-network:
+#     driver: bridge
+
+include:
+  - path: "docker/db/compose-dev.yml"
+  - path: "docker/front/compose-dev.yml"
+  - path: "docker/tools/compose-dev.yml"
+  - path: "docker/back/compose-dev.yml"
+
+volumes:
+  db_data:
+  pgadmin_data:
+
+networks:
+  myflix-network:

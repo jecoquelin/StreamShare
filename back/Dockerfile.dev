@@ -1,0 +1,24 @@
+# Utilisation de Python 3.11 slim (léger)
+FROM python:3.11-slim-bullseye
+
+# Définir le répertoire de travail
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc libpq-dev curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Installer les dépendances
+COPY requirements.txt .
+RUN pip install --upgrade pip && pip install -r requirements.txt
+
+# Copier les fichiers du backend
+COPY . .
+
+COPY wait-for-it.sh /wait-for-it.sh
+RUN chmod +x /wait-for-it.sh
+
+# Exposer le port de l'API
+EXPOSE 8000
+
+CMD ["bash"]
