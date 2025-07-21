@@ -61,11 +61,11 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
         e.preventDefault();
 
         if (isLogin) {
-        // Connexion
+            // Connexion
             // Remplace par ton appel API login
             api(apiRoutes.auth.login, undefined, {
                 body: {
-                    email: formData.email,
+                    username: formData.email,
                     password: formData.password,
                 }
             })
@@ -75,32 +75,22 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             .catch((error) => {
                 console.error('Erreur de connexion', error);
             });
-                // Gère la connexion (fermer la modal, stocker le token, etc.)
-            // await api(apiRoutes.login, undefined, {
-            //     body: {
-            //         email: formData.email,
-            //         password: formData.password,
-            //     },
-            //     method: 'POST',
-            // });
-            // // Gère la connexion (fermer la modal, stocker le token, etc.)
-            // onClose();
 
-    } else {
-        // Inscription
-        api(apiRoutes.auth.register, undefined, {
+        } else {
+            // Inscription
+            api(apiRoutes.auth.register, undefined, {
                 body: {
                     email: formData.email,
                     password: formData.password,
                 }
             })
-            .then(() => {
-                console.log("coucou inscription")
-            })
-            .catch((error) => {
-                console.error('Erreur d\'inscription', error);
-            });
-    }
+                .then(() => {
+                    console.log("coucou inscription")
+                })
+                .catch((error) => {
+                    console.error('Erreur d\'inscription', error);
+                });
+        }
         console.log('Form submitted:', formData);
     };
 
@@ -116,7 +106,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             maxWidth="sm"
             fullWidth
             slotProps={{
-                transition : { timeout: 300 },
+                transition: { timeout: 300 },
                 paper: {
                     sx: {
                         backgroundColor: 'background.paper',
@@ -235,18 +225,18 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                         )}
 
                         <Button
-                        
+
                             type="submit"
                             variant="contained"
                             size="medium"
-                            
+
                             sx={{
                                 py: 2,
                                 fontSize: '1.115rem',
                                 padding: '8px 20px',
                                 width: '90%',
-                                fontWeight: 600,  
-                                display: 'flex', 
+                                fontWeight: 600,
+                                display: 'flex',
                                 alignSelf: 'center',
                             }}
                         >

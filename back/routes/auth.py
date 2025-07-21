@@ -1,3 +1,4 @@
+from db.schemas.auth_schema import LoginRequest
 from fastapi import APIRouter, HTTPException, Depends, Response
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.responses import JSONResponse
@@ -9,22 +10,23 @@ from services.auth_service import login_user, register_user
 router = APIRouter()
 
 @router.post("/login")
-def login(response: Response, form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    token = login_user(db, form_data.username, form_data.password)
+def login(response: Response, payload: LoginRequest, db: Session = Depends(get_db)):
+    print(payload)  # Debugging line
+    token = login_user(db, payload.username, payload.password)
     if not token:
         raise HTTPException(status_code=400, detail="Incorrect email or password")
     
+    response = JSONResponse({"message": "Login successful"})
     response.set_cookie(
         key="token",
         value=token,
         httponly=True,
-        secure=False,  # à activer en prod (HTTPS uniquement)
+        secure=True,
         samesite="strict",
         path="/",
-        max_age=60 * 60 * 24 * 7  # 7 jours
+        max_age=60 * 60 * 24 * 7
     )
-
-    return {"message": "Login successful"}
+    return response
 
 @router.post("/register")
 def register(user: UserCreate, db: Session = Depends(get_db)):

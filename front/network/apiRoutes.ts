@@ -1,7 +1,7 @@
 export const apiRoutes = {
     auth: {
-        login: { method: 'POST', path: '/auth/login' },
-        register: { method: 'POST', path: '/auth/register' },
+        login: { method: 'POST', path: '/login' },
+        register: { method: 'POST', path: '/register' },
         logout: { method: 'POST', path: '/auth/logout' },
     },
     users: {

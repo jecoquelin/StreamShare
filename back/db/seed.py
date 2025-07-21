@@ -15,6 +15,7 @@ def init_db():
     db = SessionLocal()
     try:
         add_users(db)
+        add_movies(db)
         db.commit()
         print("✅ DB seeded successfully.")  # noqa: T201
     except Exception as e:
@@ -46,9 +47,9 @@ def add_users(db):
         db.refresh(new_user)
         print(f"User {new_user.email} added.")
         
-def add_users(db):
+def add_movies(db):
     if not os.path.exists(MOVIES_PATH):
-        raise FileNotFoundError(f"User file not found: {MOVIES_PATH}")
+        raise FileNotFoundError(f"Movie file not found: {MOVIES_PATH}")
 
     with open(MOVIES_PATH, encoding="utf-8") as file:
         data = json.load(file)
@@ -69,7 +70,7 @@ def add_users(db):
         db.add(new_movie)
         db.commit()
         db.refresh(new_movie)
-        print(f"User {new_movie.title} added.")
+        print(f"Movie {new_movie.title} added.")
 
 if __name__ == "__main__":
     init_db()

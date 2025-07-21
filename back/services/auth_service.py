@@ -14,7 +14,9 @@ def authenticate_user(db: Session, email: str, password: str):
     return user
 
 def login_user(db: Session, email: str, password: str):
+    print(f"Attempting to login user: {email}")  # Debugging line
     user = db.query(User).filter(User.email == email).first()
+    print(user)  # Debugging line
     if not user or not verify_password(password, user.password):
         return None
     return create_access_token({"sub": user.email})
