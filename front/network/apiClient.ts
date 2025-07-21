@@ -40,8 +40,18 @@ export async function api<T = any>(
     });
 
     if (!response.ok) {
-        const error = await response.text();
-        throw new Error(`API error (${response.status}): ${error}`);
+        let errorData;
+        try {
+            errorData = await response.json();
+        } catch {
+            errorData = { detail: await response.text() };
+        }
+
+        // Tu lances une erreur enrichie
+        throw {
+            status: response.status,
+            message: errorData.detail || 'Une erreur est survenue',
+        };
     }
 
     return await response.json();

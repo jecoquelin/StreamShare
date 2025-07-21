@@ -12,7 +12,7 @@ router = APIRouter()
 @router.post("/login")
 def login(response: Response, payload: LoginRequest, db: Session = Depends(get_db)):
     print(payload)  # Debugging line
-    token = login_user(db, payload.username, payload.password)
+    token = login_user(db, payload.email, payload.password)
     if not token:
         raise HTTPException(status_code=400, detail="Incorrect email or password")
     

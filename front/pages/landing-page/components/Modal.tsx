@@ -12,6 +12,8 @@ import {
     InputAdornment,
     Slide,
     Fade,
+    Snackbar,
+    Alert
 } from '@mui/material';
 import {
     Close,
@@ -49,6 +51,11 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
         name: '',
         confirmPassword: ''
     });
+    const [toast, setToast] = useState<{ open: boolean, message: string, severity: 'success' | 'error';}>({
+        open: false,
+        message: '',
+        severity: 'success',
+    });
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({
@@ -62,22 +69,31 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
         if (isLogin) {
             // Connexion
-            // Remplace par ton appel API login
             api(apiRoutes.auth.login, undefined, {
                 body: {
-                    username: formData.email,
+                    email: formData.email,
                     password: formData.password,
                 }
             })
             .then(() => {
-                console.log("coucou login")
+                setToast({ open: true, message: 'Connexion réussie !', severity: 'success' });
+                onClose(); 
             })
             .catch((error) => {
+                const isAuthError = error.status === 401 || error.status === 400;
+                const message = isAuthError ? 'Email ou mot de passe incorrect' : error.message;
+                setToast({ open: true, message: message, severity: 'error' });
                 console.error('Erreur de connexion', error);
             });
 
         } else {
             // Inscription
+
+            if (formData.password !== formData.confirmPassword) {
+                console.error('Les mots de passe ne correspondent pas');
+                return;
+            }
+
             api(apiRoutes.auth.register, undefined, {
                 body: {
                     email: formData.email,
@@ -86,12 +102,12 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             })
                 .then(() => {
                     console.log("coucou inscription")
+                    setIsLogin(isLogin => !isLogin);
                 })
                 .catch((error) => {
                     console.error('Erreur d\'inscription', error);
                 });
         }
-        console.log('Form submitted:', formData);
     };
 
     const handleTogglePasswordVisibility = () => {
@@ -99,6 +115,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     };
 
     return (
+        <>
         <Dialog
             open={isOpen}
             onClose={onClose}
@@ -268,8 +285,24 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                         </Button>
                     </Typography>
                 </Box>
+                
             </DialogContent>
         </Dialog>
+        <Snackbar
+                    open={toast.open}
+                    autoHideDuration={4000}
+                    onClose={() => setToast({ ...toast, open: false })}
+                    anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                >
+                    <Alert
+                        onClose={() => setToast({ ...toast, open: false })}
+                        severity={toast.severity}
+                        sx={{ width: '100%' }}
+                    >
+                        {toast.message}
+                    </Alert>
+                </Snackbar>
+        </>
     );
 };
 
