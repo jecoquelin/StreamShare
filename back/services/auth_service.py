@@ -1,9 +1,11 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, Request, Depends
 from sqlalchemy.orm import Session
+from jose import JWTError
+from db.session import get_db
 from db.schemas.user_schemas import UserCreate
 from mapper.user_mapper import user_create_to_model
 from db.models.models import User
-from core.security import get_password_hash, verify_password, create_access_token
+from core.security import decode_access_token, get_password_hash, verify_password, create_access_token
 
 required_fields = ["email", "password"]
 
@@ -42,4 +44,23 @@ def register_user(db: Session, user_data: UserCreate):
     db.add(user)
     db.commit()
     db.refresh(user)
+    return user
+
+def get_current_user(request: Request, db: Session = Depends(get_db)) -> User:
+    token = request.cookies.get("token")
+    if not token:
+        raise HTTPException(status_code=401, detail="Token manquant")
+
+    try:
+        payload = decode_access_token(token)
+        print(f"Decoded payload: {payload}")  # Debugging line
+        user_email: int = payload.get("sub")
+        if user_email is None:
+            raise HTTPException(status_code=401, detail="Token invalide")
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Token invalide")
+
+    user = db.query(User).filter(User.email == user_email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
     return user

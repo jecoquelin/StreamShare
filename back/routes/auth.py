@@ -3,9 +3,9 @@ from fastapi import APIRouter, HTTPException, Depends, Response
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
-from db.schemas.user_schemas import UserCreate
+from db.schemas.user_schemas import UserBase, UserCreate
 from db.session import get_db
-from services.auth_service import login_user, register_user
+from services.auth_service import login_user, register_user, get_current_user
 
 router = APIRouter()
 
@@ -35,3 +35,10 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
         return {"message": "User registered successfully", "user_id": created_user.id}
     else:
         raise HTTPException(status_code=400, detail="User data is required")
+    
+@router.get("/me")
+def get_me(current_user: UserBase = Depends(get_current_user)):
+    return {
+        "id": current_user.id,
+        "email": current_user.email
+    }

@@ -23,6 +23,7 @@ import {
     Visibility,
     VisibilityOff,
 } from '@mui/icons-material';
+import { useRouter } from 'next/router';
 import { TransitionProps } from '@mui/material/transitions';
 import { apiRoutes } from '../../../network/apiRoutes';
 import { api } from '../../../network/apiClient';
@@ -44,7 +45,9 @@ const Transition = React.forwardRef(function Transition(
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     const [isLogin, setIsLogin] = useState(true);
+    const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
+    const [emailError, setEmailError] = useState('');
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -62,10 +65,18 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             ...formData,
             [e.target.name]: e.target.value
         });
+        setEmailError('');
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+
+        const emailValidationError = verifyEmail(formData.email);
+        setEmailError(emailValidationError || '');
+        if (emailValidationError) {
+            setToast({ open: true, message: emailValidationError, severity: 'error' });
+            return;
+        }
 
         if (isLogin) {
             // Connexion
@@ -78,6 +89,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             .then(() => {
                 setToast({ open: true, message: 'Connexion réussie !', severity: 'success' });
                 onClose(); 
+                router.push('/home-page');
             })
             .catch((error) => {
                 const isAuthError = error.status === 401 || error.status === 400;
@@ -108,6 +120,13 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                     console.error('Erreur d\'inscription', error);
                 });
         }
+    };
+
+    const verifyEmail = (email: string) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email) return "L'email est requis";
+        if (!emailRegex.test(email)) return "Format d'email invalide";
+        return null;
     };
 
     const handleTogglePasswordVisibility = () => {
@@ -190,6 +209,8 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                                     </InputAdornment>
                                 ),
                             }}
+                            error={Boolean(emailError)}
+                            helperText={emailError}
                         />
 
                         <TextField
