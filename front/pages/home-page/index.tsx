@@ -1,116 +1,160 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  Box,
-  Typography,
-  Stack,
-  IconButton,
-  Button,
-  useMediaQuery,
-  useTheme,
+    Box,
+    Container,
 } from '@mui/material';
-import { PlayArrow, InfoOutlined } from '@mui/icons-material';
+import {
+    Search,
+    Star,
+    AccessTime,
+    Visibility,
+} from '@mui/icons-material';
 
-const movies = [
-  {
-    id: 1,
-    title: 'Inception',
-    image: '/images/inception.jpg',
-  },
-  {
-    id: 2,
-    title: 'Interstellar',
-    image: '/images/interstellar.jpg',
-  },
-  {
-    id: 3,
-    title: 'Tenet',
-    image: '/images/tenet.jpg',
-  },
-  {
-    id: 4,
-    title: 'Avatar',
-    image: '/images/avatar.jpg',
-  },
+import HeaderComponent from '../../components/header/HeaderComponent';
+import Hero from './components/Hero';
+import MovieRow from '../../components/video-row/MovieRow';
+
+// Mock data - replace with your actual API calls
+const mockVideos = [
+    {
+        id: 1,
+        title: "Le Voyage Extraordinaire",
+        thumbnail: "https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop",
+        duration: "2h 15min",
+        genre: "Aventure",
+        rating: 4.8,
+        year: 2023,
+        views: 1250,
+        isRecent: true
+    },
+    {
+        id: 2,
+        title: "Mystères de la Nuit",
+        thumbnail: "https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop",
+        duration: "1h 45min",
+        genre: "Thriller",
+        rating: 4.5,
+        year: 2023,
+        views: 890,
+        isRecent: true
+    },
+    {
+        id: 3,
+        title: "Comédie d'Été",
+        thumbnail: "https://images.pexels.com/photos/1200450/pexels-photo-1200450.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop",
+        duration: "1h 30min",
+        genre: "Comédie",
+        rating: 4.2,
+        year: 2022,
+        views: 567,
+        isRecent: false
+    },
+    {
+        id: 4,
+        title: "Science Fiction 2050",
+        thumbnail: "https://images.pexels.com/photos/2832432/pexels-photo-2832432.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop",
+        duration: "2h 30min",
+        genre: "Sci-Fi",
+        rating: 4.9,
+        year: 2023,
+        views: 2100,
+        isRecent: true
+    },
+    {
+        id: 5,
+        title: "Romance Parisienne",
+        thumbnail: "https://images.pexels.com/photos/1126993/pexels-photo-1126993.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop",
+        duration: "1h 55min",
+        genre: "Romance",
+        rating: 4.3,
+        year: 2023,
+        views: 745,
+        isRecent: false
+    },
+    {
+        id: 6,
+        title: "Action Héroïque",
+        thumbnail: "https://images.pexels.com/photos/1170986/pexels-photo-1170986.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop",
+        duration: "2h 05min",
+        genre: "Action",
+        rating: 4.7,
+        year: 2023,
+        views: 1580,
+        isRecent: true
+    },
+    {
+        id: 6,
+        title: "Action Héroïque",
+        thumbnail: "https://images.pexels.com/photos/1170986/pexels-photo-1170986.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop",
+        duration: "2h 05min",
+        genre: "Action",
+        rating: 4.7,
+        year: 2023,
+        views: 1580,
+        isRecent: true
+    }
 ];
 
-const MovieCard = ({ title, image }: { title: string; image: string }) => (
-  <Box
-    sx={{
-      minWidth: 180,
-      width: { xs: 160, sm: 180, md: 200 },
-      borderRadius: 3,
-      overflow: 'hidden',
-      position: 'relative',
-      mx: 1,
-    }}
-  >
-    <Box
-      component="img"
-      src={image}
-      alt={title}
-      sx={{
-        width: '100%',
-        height: { xs: 220, sm: 240 },
-        objectFit: 'cover',
-      }}
-    />
-    <Box
-      sx={{
-        position: 'absolute',
-        bottom: 0,
-        width: '100%',
-        background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)',
-        color: 'white',
-        px: 1,
-        py: 1,
-      }}
-    >
-      <Typography variant="subtitle2" fontWeight={600} noWrap>
-        {title}
-      </Typography>
-      <Stack direction="row" spacing={1} mt={0.5}>
-        <IconButton size="small" sx={{ color: 'white' }}>
-          <PlayArrow />
-        </IconButton>
-        <IconButton size="small" sx={{ color: 'white' }}>
-          <InfoOutlined />
-        </IconButton>
-      </Stack>
-    </Box>
-  </Box>
-);
+export default function LandingPage() {
+    const [searchQuery, setSearchQuery] = useState('');
+    const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(null);
+    const [featuredVideo, setFeaturedVideo] = useState(mockVideos[0]);
+    
+    // Filter videos based on search
+    const filteredVideos = mockVideos.filter(video =>
+        video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        video.genre.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
-export default function HomePage() {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const recentVideos = filteredVideos.filter(video => video.isRecent);
+    const popularVideos = filteredVideos.sort((a, b) => b.views - a.views);
+    const topRatedVideos = filteredVideos.sort((a, b) => b.rating - a.rating);
 
-  return (
-    <Box sx={{ p: { xs: 2, md: 4 } }}>
-      <Typography variant="h4" fontWeight={700} mb={4}>
-        Bienvenue sur StreamShare
-      </Typography>
+    const handleUserMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+        setUserMenuAnchor(event.currentTarget);
+    };
 
-      <Box mb={5}>
-        <Typography variant="h5" fontWeight={600} mb={2}>
-          Films populaires
-        </Typography>
-        <Stack direction="row" overflow="auto" pb={1}>
-          {movies.map((m) => (
-            <MovieCard key={m.id} title={m.title} image={m.image} />
-          ))}
-        </Stack>
-      </Box>
+    const handleUserMenuClose = () => {
+        setUserMenuAnchor(null);
+    };
 
-      <Box>
-        <Typography variant="h5" fontWeight={600} mb={2}>
-          Recommandés pour vous
-        </Typography>
-        <Stack direction="row" overflow="auto" pb={1}>
-          {movies.reverse().map((m) => (
-            <MovieCard key={m.id} title={m.title} image={m.image} />
-          ))}
-        </Stack>
-      </Box>
-    </Box>
-  );
-}
+    return (
+        <Box sx={{ backgroundColor: 'background.default', minHeight: '100vh' }}>
+            <HeaderComponent />
+
+            {/* Hero Section */}
+
+            <Hero featuredVideo={featuredVideo} />
+            
+
+            {/* Content Sections */}
+            <Container maxWidth="xl" sx={{ py: 6 }}>
+                {searchQuery ? (
+                    <MovieRow
+                        title={`Résultats pour "${searchQuery}"`}
+                        videos={filteredVideos}
+                        icon={<Search sx={{ fontSize: 32, color: 'primary.main' }} />}
+                    />
+                ) : (
+                    <>
+                        <MovieRow
+                            title="Récemment ajoutés"
+                            videos={recentVideos}
+                            icon={<AccessTime sx={{ fontSize: 32, color: 'primary.main' }} />}
+                        />
+                        <MovieRow
+                            title="Populaires"
+                            videos={popularVideos}
+                            icon={<Visibility sx={{ fontSize: 32, color: 'primary.main' }} />}
+                        />
+                        <MovieRow
+                            title="Mieux notés"
+                            videos={topRatedVideos}
+                            icon={<Star sx={{ fontSize: 32, color: '#ffd700' }} />}
+                        />
+                    </>
+                )}
+            </Container>
+        </Box>
+    );
+};

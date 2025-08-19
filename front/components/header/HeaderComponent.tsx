@@ -1,168 +1,150 @@
-import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
-import {AccountCircle} from "@mui/icons-material";
 
-const pages = ['Products', 'Pricing', 'Blog'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+import React, { useState, useEffect } from 'react';
+import {
+    Box,
+    Container,
+    Typography,
+    Button,
+    Stack,
+    IconButton,
+    Avatar,
+    Menu,
+    MenuItem,
+    TextField,
+    InputAdornment,
+} from '@mui/material';
+import {
+    PlayArrow,
+    Add,
+    Search,
+    AccountCircle,
+    Logout,
+    Settings,
+    History,
+} from '@mui/icons-material';
 
-export default function Header() {
-    const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
-    const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+export default function HeaderComponent() {
+    const [searchQuery, setSearchQuery] = useState('');
+    const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(null);
+    const isUserMenuOpen = Boolean(userMenuAnchor);
 
-    const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorElNav(event.currentTarget);
+    const handleUserMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+        setUserMenuAnchor(event.currentTarget);
     };
-    const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorElUser(event.currentTarget);
-    };
 
-    const handleCloseNavMenu = () => {
-        setAnchorElNav(null);
-    };
-
-    const handleCloseUserMenu = () => {
-        setAnchorElUser(null);
+    const handleUserMenuClose = () => {
+        setUserMenuAnchor(null);
     };
 
     return (
-        <AppBar position="static">
+        <><Box
+            sx={{
+                position: 'sticky',
+                top: 0,
+                zIndex: 1000,
+                backgroundColor: 'rgba(15, 15, 26, 0.95)',
+                backdropFilter: 'blur(10px)',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+            }}
+        >
             <Container maxWidth="xl">
-                <Toolbar disableGutters>
-                    <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
-                    <Typography
-                        variant="h6"
-                        noWrap
-                        component="a"
-                        href="#app-bar-with-responsive-menu"
-                        sx={{
-                            mr: 2,
-                            display: { xs: 'none', md: 'flex' },
-                            fontFamily: 'monospace',
-                            fontWeight: 700,
-                            letterSpacing: '.3rem',
-                            color: 'inherit',
-                            textDecoration: 'none',
-                        }}
-                    >
-                        LOGO
-                    </Typography>
+                <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    sx={{ py: 2 }}
+                >
+                    {/* Logo */}
+                    <Stack direction="row" alignItems="center" spacing={2}>
+                        <PlayArrow sx={{ fontSize: 40, color: 'primary.main' }} />
+                        <Typography
+                            variant="h4"
+                            sx={{
+                                fontWeight: 700,
+                                background: 'linear-gradient(45deg, #ffffff 30%, #E50914 90%)',
+                                backgroundClip: 'text',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                            }}
+                        >
+                            StreamShare
+                        </Typography>
+                    </Stack>
 
-                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' }, justifyContent: 'center' }}>
-                        <IconButton
-                            size="large"
-                            aria-label="account of current user"
-                            aria-controls="menu-appbar"
-                            aria-haspopup="true"
-                            onClick={handleOpenNavMenu}
-                            color="inherit"
-                        >
-                            <MenuIcon />
-                        </IconButton>
-                        <Menu
-                            id="menu-appbar"
-                            anchorEl={anchorElNav}
-                            anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'left',
+                    {/* Search Bar */}
+                    <Box sx={{ flexGrow: 1, maxWidth: 400, mx: 4 }}>
+                        <TextField
+                            fullWidth
+                            placeholder="Rechercher films, séries..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <Search sx={{ color: 'text.secondary' }} />
+                                    </InputAdornment>
+                                ),
                             }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'left',
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                    '&:hover': {
+                                        backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                                    },
+                                },
+                            }} />
+                    </Box>
+
+                    {/* User Menu */}
+                    <Stack direction="row" spacing={2} alignItems="center">
+                        <Button
+                            variant="outlined"
+                            startIcon={<Add />}
+                            sx={{
+                                color: 'white',
+                                borderColor: 'rgba(255, 255, 255, 0.3)',
+                                '&:hover': {
+                                    borderColor: 'primary.main',
+                                    backgroundColor: 'rgba(229, 9, 20, 0.1)',
+                                },
                             }}
-                            open={Boolean(anchorElNav)}
-                            onClose={handleCloseNavMenu}
-                            sx={{ display: { xs: 'block', md: 'none' } }}
                         >
-                            {pages.map((page) => (
-                                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                                    <Typography sx={{ textAlign: 'center' }}>{page}</Typography>
-                                </MenuItem>
-                            ))}
-                        </Menu>
-                    </Box>
-                    <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
-                    <Typography
-                        variant="h5"
-                        noWrap
-                        component="a"
-                        href="#app-bar-with-responsive-menu"
-                        sx={{
-                            mr: 2,
-                            display: { xs: 'flex', md: 'none' },
-                            flexGrow: 1,
-                            fontFamily: 'monospace',
-                            fontWeight: 700,
-                            letterSpacing: '.3rem',
-                            color: 'inherit',
-                            textDecoration: 'none',
-                        }}
-                    >
-                        LOGO
-                    </Typography>
-                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'center' }}>
-                        {pages.map((page) => (
-                            <Button
-                                key={page}
-                                onClick={handleCloseNavMenu}
-                                sx={{ my: 2, color: 'white', display: 'block' }}
-                            >
-                                {page}
-                            </Button>
-                        ))}
-                    </Box>
-                    <Box sx={{ flexGrow: 0 }}>
-                        <Tooltip title="Open settings">
-                            <IconButton
-                                size="large"
-                                aria-label="account of current user"
-                                aria-controls="menu-appbar"
-                                aria-haspopup="true"
-                                onClick={handleOpenUserMenu}
-                                color="inherit"
-                            >
+                            Ajouter
+                        </Button>
+                        <IconButton onClick={handleUserMenuOpen}>
+                            <Avatar sx={{ backgroundColor: 'primary.main' }}>
                                 <AccountCircle />
-                            </IconButton>
-                            {/*<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>*/}
-                            {/*    <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />*/}
-                            {/*</IconButton>*/}
-                        </Tooltip>
-                        <Menu
-                            sx={{ mt: '45px' }}
-                            id="menu-appbar"
-                            anchorEl={anchorElUser}
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            open={Boolean(anchorElUser)}
-                            onClose={handleCloseUserMenu}
-                        >
-                            {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                    <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
-                                </MenuItem>
-                            ))}
-                        </Menu>
-                    </Box>
-                </Toolbar>
+                            </Avatar>
+                        </IconButton>
+                    </Stack>
+                </Stack>
             </Container>
-        </AppBar>
-    );
+        </Box>
+        <Menu
+            anchorEl={userMenuAnchor}
+            open={Boolean(userMenuAnchor)}
+            onClose={handleUserMenuClose}
+            sx={{
+                '& .MuiPaper-root': {
+                    backgroundColor: 'rgba(15, 15, 26, 0.95)',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                },
+            }}
+        >
+                <MenuItem onClick={handleUserMenuClose}>
+                    <Settings sx={{ mr: 2 }} />
+                    Paramètres
+                </MenuItem>
+                <MenuItem onClick={handleUserMenuClose}>
+                    <History sx={{ mr: 2 }} />
+                    Historique
+                </MenuItem>
+                <MenuItem onClick={handleUserMenuClose}>
+                    <Logout sx={{ mr: 2 }} />
+                    Déconnexion
+                </MenuItem>
+            </Menu>
+        </>
+    )
 }
