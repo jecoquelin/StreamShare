@@ -4,17 +4,20 @@ import random
 import sys
 from db.models.models import User
 from db.models.models import Movie
+from db.models.models import Genre
 from db.session import SessionLocal
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 USERS_PATH = os.path.join(BASE_DIR, "scripts_db", "users.json")
 MOVIES_PATH = os.path.join(BASE_DIR, "scripts_db", "movies.json")
+GENRES_PATH = os.path.join(BASE_DIR, "scripts_db", "genres.json")
 
 
 def init_db():
     db = SessionLocal()
     try:
         add_users(db)
+        add_genres(db)
         add_movies(db)
         db.commit()
         print("✅ DB seeded successfully.")  # noqa: T201
@@ -61,16 +64,39 @@ def add_movies(db):
     
         new_movie = Movie(
             title=movie["title"],
-            release_year=movie["release_year"],
+            thumbnail=movie["thumbnail"],
+            duration=movie["duration"],
+            id_genre=movie["id_genre"],
+            rating=movie["rating"],
+            year=movie["year"],
+            views=movie["views"],
             director=movie["director"],
             description=movie["description"],
-            genre=movie["genre"],
-            rating=movie["rating"],
         )
         db.add(new_movie)
         db.commit()
         db.refresh(new_movie)
         print(f"Movie {new_movie.title} added.")
+        
+def add_genres(db):
+    if not os.path.exists(GENRES_PATH):
+        raise FileNotFoundError(f"Genre file not found: {GENRES_PATH}")
+
+    with open(GENRES_PATH, encoding="utf-8") as file:
+        data = json.load(file)
+
+    for genre in data:
+        
+        if db.query(Genre).filter_by(name=genre["name"]).first():
+            continue
+    
+        new_genre = Genre(
+            name=genre["name"],
+        )
+        db.add(new_genre)
+        db.commit()
+        db.refresh(new_genre)
+        print(f"Genre {new_genre.name} added.")
 
 if __name__ == "__main__":
     init_db()

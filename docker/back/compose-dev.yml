@@ -5,7 +5,7 @@ services:
       context: ../../back
       dockerfile: Dockerfile.dev
     command: >
-      bash -c "/wait-for-it.sh db:5432 --timeout=30 --strict -- && rm alembic/versions/*.py && alembic revision --autogenerate -m 'auto-migration' && alembic upgrade head && python db/seed.py"
+      bash -c "/wait-for-it.sh db:5432 --timeout=30 --strict -- && rm -f alembic/versions/*.py && alembic revision --autogenerate -m 'auto-migration' && alembic upgrade head && python db/seed.py"
     environment:
       - DATABASE_USER=${DATABASE_USER}
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}

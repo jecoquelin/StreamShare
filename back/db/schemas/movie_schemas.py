@@ -4,19 +4,22 @@ from pydantic import BaseModel
 
 class MovieBase(BaseModel):
     title: str
-    release_year: int
+    thumbnail: Optional[str] = None
+    duration: Optional[str] = None
+    id_genre: Optional[int] = None
+    rating: Optional[float] = None
+    year: Optional[int] = None
+    views: Optional[int] = 0
     director: Optional[str] = None
     description: Optional[str] = None
-    genre: Optional[str] = None
-    rating: Optional[float] = None
 
 class MovieCreate(MovieBase):
     title: str
-    release_year: int
+    year: int
     
 class MovieUpdate(MovieBase):
     title: Optional[str] = None
-    release_year: Optional[int] = None
+    year: Optional[int] = None
     director: Optional[str] = None
     description: Optional[str] = None
     genre: Optional[str] = None

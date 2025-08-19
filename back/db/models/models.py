@@ -10,8 +10,6 @@ Base = declarative_base()
 class BaseModel(Base):
     __abstract__ = True
     id = Column(Integer, primary_key=True, autoincrement=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, onupdate=datetime.utcnow)
     
     
 class User(BaseModel):
@@ -25,8 +23,16 @@ class Movie(BaseModel):
     __tablename__ = 'movies'
     
     title = Column(String(255), nullable=False)
-    release_year = Column(Integer, nullable=False)
+    thumbnail = Column(String(255), nullable=True)
+    duration = Column(String(10), nullable=True)
+    id_genre = Column(Integer, ForeignKey('genres.id'), nullable=True)
+    rating = Column(Float, nullable=True)
+    year = Column(Integer, nullable=True)
+    views = Column(Integer, default=0)
     director = Column(String(100), nullable=True)
     description = Column(Text, nullable=True)
-    genre = Column(String(50), nullable=True)
-    rating = Column(Float, nullable=True)
+    
+class Genre(BaseModel):
+    __tablename__ = 'genres'
+    
+    name = Column(String(50), unique=True, nullable=False)

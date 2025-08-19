@@ -1,11 +1,38 @@
 [
     {
-        "id": 1,
-        "title": "Inception",
-        "director": "Christopher Nolan",
-        "release_year": 2010,
-        "genre": "Science Fiction",
-        "rating": 8.8,
-        "description": "A skilled thief is given a chance at redemption if he can successfully perform inception, the act of planting an idea into someone's subconscious."
+      "id": 1,
+      "title": "Inception",
+      "thumbnail": "inception.jpg",
+      "duration": "148 min",
+      "id_genre": 1,
+      "rating": 8.8,
+      "year": 2010,
+      "views": 1500000,
+      "director": "Christopher Nolan",
+      "description": "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO."
+    },
+    {
+      "id": 2,
+      "title": "The Shawshank Redemption",
+      "thumbnail": "shawshank.jpg",
+      "duration": "142 min",
+      "id_genre": 2,
+      "rating": 9.3,
+      "year": 1994,
+      "views": 2000000,
+      "director": "Frank Darabont",
+      "description": "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency."
+    },
+    {
+      "id": 3,
+      "title": "The Hangover",
+      "thumbnail": "hangover.jpg",
+      "duration": "100 min",
+      "id_genre": 3,
+      "rating": 7.7,
+      "year": 2009,
+      "views": 1200000,
+      "director": "Todd Phillips",
+      "description": "Three buddies wake up from a bachelor party in Las Vegas, with no memory of the previous night and the bachelor missing."
     }
-]
+  ]
