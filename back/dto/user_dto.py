@@ -1,17 +1,22 @@
 from pydantic import BaseModel, EmailStr
+from typing import Optional
 
 class UserCreate(BaseModel) :
     email: EmailStr
+    username: str
     password: str
+    role_id: int
     
 class UserRead(BaseModel):
     id: int
     email: EmailStr
-    role: str = "user"  # Default role is 'user'
+    username: str
+    role: str
 
     class Config:
-        orm_mode = True  # Allows Pydantic to read data from ORM models
+        orm_mode = True
 
 class UserUpdate(BaseModel):
-    email: EmailStr | None = None
-    password: str | None = None
+    email: Optional[EmailStr] = None
+    username: Optional[str] = None
+    password: Optional[str] = None

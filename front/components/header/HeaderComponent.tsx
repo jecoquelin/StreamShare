@@ -23,8 +23,12 @@ import {
     History,
 } from '@mui/icons-material';
 
-export default function HeaderComponent() {
-    const [searchQuery, setSearchQuery] = useState('');
+interface Props {
+    setSearchMovie: (query: string) => void;
+}
+
+export default function HeaderComponent({setSearchMovie}: Props) {
+    const [searchQuery, setSearchQuery] = useState<string>('');
     const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(null);
     const isUserMenuOpen = Boolean(userMenuAnchor);
 
@@ -34,6 +38,13 @@ export default function HeaderComponent() {
 
     const handleUserMenuClose = () => {
         setUserMenuAnchor(null);
+    };
+
+    const handleQueryChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const query = e.target.value;
+        console.log("Search Query:", query);
+        setSearchQuery(query);
+        setSearchMovie(query);
     };
 
     return (
@@ -77,7 +88,7 @@ export default function HeaderComponent() {
                             fullWidth
                             placeholder="Rechercher films, séries..."
                             value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onChange={(e) => handleQueryChange(e)}
                             InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">

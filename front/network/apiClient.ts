@@ -1,4 +1,6 @@
 function formatEndpoint(template: string, params?: Record<string, string | number>) {
+    console.log("Template:", template);
+    console.log("Params:", params);
     return template.replace(/\{(\w+)\}/g, (_, key) => {
         const value = params?.[key];
         if (!value) throw new Error(`Paramètre manquant : ${key}`);
@@ -25,6 +27,7 @@ export async function api<T = any>(
     const { body, headers, queryParams } = options;
 
     const url = new URL(formatEndpoint(route.path, pathParams), "http://localhost:8001");
+    console.log("Constructed URL:", url.toString());
     if (queryParams) {
         Object.entries(queryParams).forEach(([k, v]) => url.searchParams.append(k, String(v)));
     }
@@ -39,12 +42,14 @@ export async function api<T = any>(
         ...(body && { body: JSON.stringify(body) }),
     });
 
+
     if (!response.ok) {
+        const text = await response.text(); // Obtenir le texte brut
         let errorData;
         try {
-            errorData = await response.json();
+            errorData = JSON.parse(text);
         } catch {
-            errorData = { detail: await response.text() };
+            errorData = { detail: text }; // si ce n’est pas du JSON
         }
 
         // Tu lances une erreur enrichie
@@ -54,5 +59,15 @@ export async function api<T = any>(
         };
     }
 
-    return await response.json();
+    // Vérification du type de contenu avant d'analyser
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+        return await response.json() as T;
+    } else if (contentType && contentType.includes('application/vnd.apple.mpegurl')) {
+        // Traiter comme du texte (ou une autre manipulation si nécessaire)
+        return await response.text() as unknown as T; // ou une autre logique pour gérer la playlist
+    }
+
+    // Ajoute un retour par défaut si aucun des cas précédents n'est atteint
+    throw new Error('Type de contenu non géré : ' + contentType);
 }

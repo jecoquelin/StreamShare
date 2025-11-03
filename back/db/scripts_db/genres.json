@@ -1,14 +1,38 @@
 [
     {
-      	"id": 1,
-      	"name": "Action"
+        "id": 1,
+        "name": "Science-fiction"
     },
     {
-      	"id": 2,
-      	"name": "Drama"
+        "id": 2,
+        "name": "Action"
     },
     {
-      	"id": 3,
-      	"name": "Comedy"
+        "id": 3,
+        "name": "Thriller"
+    },
+    {
+        "id": 4,
+        "name": "Comédie"
+    },
+    {
+        "id": 5,
+        "name": "Guerre"
+    },
+    {
+        "id": 6,
+        "name": "Drame"
+    },
+    {
+        "id": 7,
+        "name": "Super-héros"
+    },
+    {
+        "id": 8,
+        "name": "Aventure"
+    },
+    {
+        "id": 9,
+        "name": "Sport"
     }
 ]

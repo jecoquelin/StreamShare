@@ -5,7 +5,7 @@ services:
       context: ../../back
       dockerfile: Dockerfile.dev
     command: >
-      bash -c "/wait-for-it.sh db:5432 --timeout=30 --strict -- && rm -f alembic/versions/*.py && alembic revision --autogenerate -m 'auto-migration' && alembic upgrade head && python db/seed.py"
+      bash -c "/wait-for-it.sh db:5432 --timeout=30 --strict -- && alembic revision --autogenerate -m 'auto-migration' && alembic upgrade head && python db/seed.py"
     environment:
       - DATABASE_USER=${DATABASE_USER}
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
@@ -37,6 +37,7 @@ services:
       - PYTHONPATH=/app
     volumes:
       - ../../back:/app
+      - ../../back/hls:/app/hls # Movie hls folder mapping
     depends_on:
       migration:
         condition: service_completed_successfully
@@ -44,3 +45,5 @@ services:
       bash -c "uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
     networks:
       - myflix-network
+
+# bash -c "/wait-for-it.sh db:5432 --timeout=30 --strict -- && rm -f alembic/versions/*.py && alembic revision --autogenerate -m 'auto-migration' && alembic upgrade head && python db/seed.py"

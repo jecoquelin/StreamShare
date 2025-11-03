@@ -1,38 +1,123 @@
 [
-    {
-      "id": 1,
-      "title": "Inception",
-      "thumbnail": "inception.jpg",
-      "duration": "148 min",
-      "id_genre": 1,
-      "rating": 8.8,
-      "year": 2010,
-      "views": 1500000,
-      "director": "Christopher Nolan",
-      "description": "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO."
-    },
-    {
-      "id": 2,
-      "title": "The Shawshank Redemption",
-      "thumbnail": "shawshank.jpg",
-      "duration": "142 min",
-      "id_genre": 2,
-      "rating": 9.3,
-      "year": 1994,
-      "views": 2000000,
-      "director": "Frank Darabont",
-      "description": "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency."
-    },
-    {
-      "id": 3,
-      "title": "The Hangover",
-      "thumbnail": "hangover.jpg",
-      "duration": "100 min",
-      "id_genre": 3,
-      "rating": 7.7,
-      "year": 2009,
-      "views": 1200000,
-      "director": "Todd Phillips",
-      "description": "Three buddies wake up from a bachelor party in Las Vegas, with no memory of the previous night and the bachelor missing."
-    }
-  ]
+	{
+		"id": 1,
+		"title": "Inception",
+		"thumbnail": "https://image.tmdb.org/t/p/w500/ljsZTbVsrQSqZgWeep2B1QiDKuh.jpg",
+		"duration_second": 8880,
+		"rating": 8.8,
+		"year": 2010,
+		"views": 1500000,
+		"director": "Christopher Nolan",
+		"description": "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO."
+	},
+	{
+		"id": 2,
+		"title": "On a retrouvé la 7eme compagnie",
+		"thumbnail": "https://image.tmdb.org/t/p/w500/oBsGkRLaeZzoJr4qnlyF6wZQst9.jpg",
+		"duration_second": 8940,
+		"rating": 8.5,
+		"year": 1934,
+		"views": 1200000,
+		"director": "Raymond Bernard",
+		"description": "Sur le front de la bataille de la Marne, le sergent Bertrand escorte sept hommes, dont le quinquagénaire Sauvagnac, mais ils sont faits prisonniers par l'ennemi et sont rédimés après plusieurs aventures."
+	},
+	{
+		"id": 3,
+		"title": "1917",
+		"thumbnail": "https://image.tmdb.org/t/p/w500/iZf0KyrE25z1sage4SYFLCCrMi9.jpg",
+		"duration_second": 7140,
+		"rating": 8.6,
+		"year": 2019,
+		"views": 1800000,
+		"director": "Sam Mendes",
+		"description": "Envoyés parachutistes dans les premières lignes pendant les derniers jours de la Première Guerre mondiale, deux soldats britanniques doivent traverser le no man's land et affronter l'ennemi pour transmettre un message qui pourrait sauver 1600 vies."
+	},
+	{
+		"id": 4,
+		"title": "Deadpool",
+		"thumbnail": "https://image.tmdb.org/t/p/w500/3E53WEZJqP6aM84D8CckXx4pIHw.jpg",
+		"duration_second": 6480,
+		"rating": 7.7,
+		"year": 2016,
+		"views": 1000000,
+		"director": "Tim Miller",
+		"description": "Un mercenaire a une forme rare de cancer et demande à ses collègues super-héros d'admettre que Deadpool pourrait être le seul à pouvoir lui venir en aide."
+	},
+	{
+		"id": 5,
+		"title": "Deadpool 2",
+		"thumbnail": "https://image.tmdb.org/t/p/w500/to0spRl1CMDvyUbOnbb4fTk3VAd.jpg",
+		"duration_second": 7080,
+		"rating": 7.4,
+		"year": 2018,
+		"views": 900000,
+		"director": "David Leitch",
+		"description": "Deadpool voyage avec Russell dans le cadre d'une opération secrète pour rendre le monde sûr pour les héros génétiquement améliorés."
+	},
+	{
+		"id": 6,
+		"title": "Dumb and Dumber",
+		"thumbnail": "https://image.tmdb.org/t/p/w500/4LdpBXiCyGKkR8FGHgjKlphrfUc.jpg",
+		"duration_second": 6420,
+		"rating": 7.3,
+		"year": 1994,
+		"views": 1500000,
+		"director": "Peter Farrelly",
+		"description": "Deux amis idiots partent en road trip pour rendre une mallette à une femme qu'ils ont rencontrée par accident."
+	},
+	{
+		"id": 7,
+		"title": "Dune",
+		"thumbnail": "https://image.tmdb.org/t/p/w500/d5NXSklXo0qyIYkgV94XAgMIckC.jpg",
+		"duration_second": 9300,
+		"rating": 8.2,
+		"year": 2021,
+		"views": 1300000,
+		"director": "Denis Villeneuve",
+		"description": "Sur la planète désertique d'Arrakis, un jeune noble, Paul Atréides, doit naviguer dans un monde de complots et de dangers pour assurer l'avenir de sa famille et de son peuple, tout en découvrant son destin."
+	},
+	{
+		"id": 8,
+		"title": "Dune: Part Two",
+		"thumbnail": "https://image.tmdb.org/t/p/w500/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg",
+		"duration_second": 9960,
+		"rating": "8.6",
+		"year": "2024",
+		"views": "1500000",
+		"director": "Denis Villeneuve",
+		"description": "Paul Atreides s'allie à Chani et aux Fremen tout en cherchant à se venger des conspirateurs responsables de la chute de sa famille."
+	},
+	{
+		"id": 9,
+		"title": "Free Guy",
+		"thumbnail": "https://image.tmdb.org/t/p/w500/6PFJrMvoQwBxQITLYHj09VeJ37q.jpg",
+		"duration_second": 5160,
+		"rating": 7.3,
+		"year": 2020,
+		"views": 1200000,
+		"director": "Shawn Levy",
+		"description": "Dans un jeu vidéo ouvert, un gardien de banque trouve qu'il est le figurant d'un jeu vidéo et devient pour la première fois le héros d'un best-seller."
+	},
+	{
+		"id": 10,
+		"title": "Ready Player One",
+		"thumbnail": "https://image.tmdb.org/t/p/w500/pU1ULUq8D3iRxl1fdX2lZIzdHuI.jpg",
+		"duration_second": 8400,
+		"rating": 7.9,
+		"year": 2018,
+		"views": 1800000,
+		"director": "Steven Spielberg",
+		"description": "En 2045, pour échapper à un monde réel criblé de pauvreté et de désespoir, des millions de personnes s'échappent dans un vaste univers en réalité virtuelle connu sous le nom d'OASIS, créé par un innovateur visionnaire nommé James Halliday."
+	},
+	{
+		"id": 11,
+		"title": "Real Steel",
+		"thumbnail": "https://image.tmdb.org/t/p/w500/4GIeI5K5YdDUkR3mNQBoScpSFEf.jpg",
+		"duration_second": 7620,
+		"rating": 7.0,
+		"year": 2011,
+		"views": 850000,
+		"director": "Shawn Levy",
+		"description": "Dans un futur proche, le sport de la boxe est remplacé par des combats de robots. Un ancien boxeur et son fils tentent de construire et d'entraîner un champion inattendu."
+	}
+]

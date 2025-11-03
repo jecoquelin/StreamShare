@@ -27,6 +27,7 @@ import { useRouter } from 'next/router';
 import { TransitionProps } from '@mui/material/transitions';
 import { apiRoutes } from '../../../network/apiRoutes';
 import { api } from '../../../network/apiClient';
+import { useAuth } from '../../../contexts/AuthContext';
 
 
 interface ModalProps {
@@ -59,6 +60,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
         message: '',
         severity: 'success',
     });
+    const { refreshUser } = useAuth(); // 👈 Récupère refreshUser
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({
@@ -68,7 +70,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
         setEmailError('');
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => { // 👈 Ajoute async
         e.preventDefault();
 
         const emailValidationError = verifyEmail(formData.email);
@@ -80,23 +82,28 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
         if (isLogin) {
             // Connexion
-            api(apiRoutes.auth.login, undefined, {
-                body: {
-                    email: formData.email,
-                    password: formData.password,
-                }
-            })
-            .then(() => {
+            try {
+                await api(apiRoutes.auth.login, undefined, {
+                    body: {
+                        email: formData.email,
+                        password: formData.password,
+                    }
+                });
+                
+                console.log("coucou connexion");
+                
+                // 👇 CRUCIAL : Rafraîchit le user dans le contexte
+                await refreshUser();
+                
                 setToast({ open: true, message: 'Connexion réussie !', severity: 'success' });
-                onClose(); 
+                onClose();
                 router.push('/home-page');
-            })
-            .catch((error) => {
+            } catch (error: any) {
                 const isAuthError = error.status === 401 || error.status === 400;
                 const message = isAuthError ? 'Email ou mot de passe incorrect' : error.message;
                 setToast({ open: true, message: message, severity: 'error' });
                 console.error('Erreur de connexion', error);
-            });
+            }
 
         } else {
             // Inscription

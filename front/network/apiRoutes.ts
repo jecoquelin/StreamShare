@@ -1,6 +1,7 @@
 export const apiRoutes = {
     auth: {
         login: { method: 'POST', path: '/login' },
+        me: { method: 'GET', path: '/me' },
         register: { method: 'POST', path: '/register' },
         logout: { method: 'POST', path: '/auth/logout' },
     },
@@ -17,5 +18,19 @@ export const apiRoutes = {
         create: { method: 'POST', path: '/movie' },
         update: { method: 'PUT', path: '/movie/{id}' },
         delete: { method: 'DELETE', path: '/movie/{id}' },
+        genre: { method: 'GET', path: '/movies/genre/{id_genre}'},
+        hlsPlaylist: { method: 'GET', path: '/movies/{movie_id}/hls/playlist' },
+        watchedPosition: {
+            get: { method: 'GET', path: '/movie/{movie_id}/position' },
+            update: { method: 'PUT', path: '/movie/{movie_id}/position' },
+        }
     },
+    genres: {
+        list: { method: 'GET', path: '/genres' },
+        get: { method: 'GET', path: '/genre/{id}' },
+        create: { method: 'POST', path: '/genre' },
+        update: { method: 'PUT', path: '/genre/{id}' },
+        delete: { method: 'DELETE', path: '/genre/{id}' },
+    }
+
 } as const;

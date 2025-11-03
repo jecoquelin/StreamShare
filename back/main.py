@@ -1,8 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from routes import movies
-from routes import auth
+from routes import movies, auth, genres
 
 app = FastAPI()
 
@@ -21,3 +20,5 @@ def read_root():
 # Inclure la route
 app.include_router(movies.router)
 app.include_router(auth.router)
+app.include_router(genres.router)
+

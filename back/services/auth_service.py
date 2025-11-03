@@ -2,7 +2,7 @@ from fastapi import HTTPException, Request, Depends
 from sqlalchemy.orm import Session
 from jose import JWTError
 from db.session import get_db
-from db.schemas.user_schemas import UserCreate
+from db.schemas.user_schema import UserCreate
 from mapper.user_mapper import user_create_to_model
 from db.models.models import User
 from core.security import decode_access_token, get_password_hash, verify_password, create_access_token
@@ -16,9 +16,7 @@ def authenticate_user(db: Session, email: str, password: str):
     return user
 
 def login_user(db: Session, email: str, password: str):
-    print(f"Attempting to login user: {email}")  # Debugging line
     user = db.query(User).filter(User.email == email).first()
-    print(user)  # Debugging line
     if not user or not verify_password(password, user.password):
         return None
     return create_access_token({"sub": user.email})
@@ -53,7 +51,6 @@ def get_current_user(request: Request, db: Session = Depends(get_db)) -> User:
 
     try:
         payload = decode_access_token(token)
-        print(f"Decoded payload: {payload}")  # Debugging line
         user_email: int = payload.get("sub")
         if user_email is None:
             raise HTTPException(status_code=401, detail="Token invalide")

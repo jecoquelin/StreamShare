@@ -1,54 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
     Box,
-    Container,
     Typography,
-    Button,
     Stack,
-    Card,
-    CardMedia,
     Grid,
-    IconButton,
-    Avatar,
-    Menu,
-    MenuItem,
-    Chip,
-    TextField,
-    InputAdornment,
-    Fade,
-    Slide,
 } from '@mui/material';
-import {
-    PlayArrow,
-    Add,
-    Search,
-    AccountCircle,
-    Logout,
-    Settings,
-    History,
-    Favorite,
-    Star,
-    AccessTime,
-    Visibility,
-} from '@mui/icons-material';
-
-interface VideoProps {
-    // title: string;
-    // content: string;
-    id: number;
-    title: string;
-    thumbnail: string;
-    duration: string;
-    genre: string;
-    rating: number;
-    year: number;
-    views: number;
-    isRecent: boolean;
-}
-
 import MovieCard from '../movie-card/MovieCard';
+import { Movie } from '../../interfaces/movie';
 
-export default function MovieRow({ title, videos, icon } : {title: string, videos: VideoProps[], icon: React.ReactNode} ) {
+export default function MovieRow({ title, videos, icon } : {title: string, videos: Movie[], icon: React.ReactNode} ) {
     return (
         <Box sx={{ mb: 6 }}>
             <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 3 }}>

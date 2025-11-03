@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import {
     Box,
+    Chip,
     Container,
+    Stack,
 } from '@mui/material';
 import {
     Search,
@@ -13,102 +15,28 @@ import {
 import HeaderComponent from '../../components/header/HeaderComponent';
 import Hero from './components/Hero';
 import MovieRow from '../../components/video-row/MovieRow';
-
-// Mock data - replace with your actual API calls
-const mockVideos = [
-    {
-        id: 1,
-        title: "Le Voyage Extraordinaire",
-        thumbnail: "https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop",
-        duration: "2h 15min",
-        genre: "Aventure",
-        rating: 4.8,
-        year: 2023,
-        views: 1250,
-        isRecent: true
-    },
-    {
-        id: 2,
-        title: "Mystères de la Nuit",
-        thumbnail: "https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop",
-        duration: "1h 45min",
-        genre: "Thriller",
-        rating: 4.5,
-        year: 2023,
-        views: 890,
-        isRecent: true
-    },
-    {
-        id: 3,
-        title: "Comédie d'Été",
-        thumbnail: "https://images.pexels.com/photos/1200450/pexels-photo-1200450.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop",
-        duration: "1h 30min",
-        genre: "Comédie",
-        rating: 4.2,
-        year: 2022,
-        views: 567,
-        isRecent: false
-    },
-    {
-        id: 4,
-        title: "Science Fiction 2050",
-        thumbnail: "https://images.pexels.com/photos/2832432/pexels-photo-2832432.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop",
-        duration: "2h 30min",
-        genre: "Sci-Fi",
-        rating: 4.9,
-        year: 2023,
-        views: 2100,
-        isRecent: true
-    },
-    {
-        id: 5,
-        title: "Romance Parisienne",
-        thumbnail: "https://images.pexels.com/photos/1126993/pexels-photo-1126993.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop",
-        duration: "1h 55min",
-        genre: "Romance",
-        rating: 4.3,
-        year: 2023,
-        views: 745,
-        isRecent: false
-    },
-    {
-        id: 6,
-        title: "Action Héroïque",
-        thumbnail: "https://images.pexels.com/photos/1170986/pexels-photo-1170986.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop",
-        duration: "2h 05min",
-        genre: "Action",
-        rating: 4.7,
-        year: 2023,
-        views: 1580,
-        isRecent: true
-    },
-    {
-        id: 6,
-        title: "Action Héroïque",
-        thumbnail: "https://images.pexels.com/photos/1170986/pexels-photo-1170986.jpeg?auto=compress&cs=tinysrgb&w=400&h=225&fit=crop",
-        duration: "2h 05min",
-        genre: "Action",
-        rating: 4.7,
-        year: 2023,
-        views: 1580,
-        isRecent: true
-    }
-];
+import { api } from '../../network/apiClient';
+import { apiRoutes } from '../../network/apiRoutes';
+import { useSnackbar } from '../../components/snackbar-context/SnackbarContext';
+import { Genre } from '../../interfaces/genre';
+import { Movie } from '../../interfaces/movie';
 
 export default function LandingPage() {
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchQuery, setSearchQuery] = useState<string>('');
     const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(null);
-    const [featuredVideo, setFeaturedVideo] = useState(mockVideos[0]);
-    
-    // Filter videos based on search
-    const filteredVideos = mockVideos.filter(video =>
-        video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        video.genre.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const [featuredVideo, setFeaturedVideo] = useState<Movie>();
+    const [genres, setGenres] = useState<Genre[]>([]);
+    const [moviesList, setMoviesList] = useState<Movie[]>();
+    const [selectedGenre, setSelectedGenre] = useState<Genre>(); // État pour le genre sélectionné
+    const [moviesByGenre, setMoviesByGenre] = useState<Movie[]>([]); // État pour les films filtrés par genre
+    const { showSnackbar } = useSnackbar(); // Utiliser le hook pour afficher la Snackbar
+    const [searchedMovies, setSearchedMovies] = useState<Movie[]>([]);
 
-    const recentVideos = filteredVideos.filter(video => video.isRecent);
-    const popularVideos = filteredVideos.sort((a, b) => b.views - a.views);
-    const topRatedVideos = filteredVideos.sort((a, b) => b.rating - a.rating);
+    const [recentMovie, setRecentMovie] = useState<Movie[]>();
+    const [popularVideos, setPopularVideos] = useState<Movie[]>();
+    const [topRatedVideos, setTopRatedVideos] = useState<Movie[]>();
+
+
 
     const handleUserMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
         setUserMenuAnchor(event.currentTarget);
@@ -118,43 +46,160 @@ export default function LandingPage() {
         setUserMenuAnchor(null);
     };
 
+    const handleGenreSelect = (genre: Genre) => {
+        filterMovieByGenre(genre.id);
+        setSelectedGenre(prev => genre);
+    };
+
+    useEffect(() => {
+        retireveAllGenres();
+    }, []);
+
+    useEffect(() => {
+        retireveAllMovies();
+    }, []);
+
+    useEffect(() => {
+        filterMovieByName();
+    }, [searchQuery]);
+
+    function retireveAllMovies() {
+        api(apiRoutes.movies.list)
+            .then((movies: Movie[]) => {
+                if (movies.length > 0) {
+                    setMoviesList(movies);
+                    const filteredVideos = movies.filter(video => {
+                        const query = searchQuery.toLowerCase();
+                        const titleMatch = video.title.toLowerCase().includes(query);
+                        const genreMatch = Array.isArray(video.genres)
+                            ? video.genres.some(g => g.name.toLowerCase().includes(query))
+                            : (video.genres && (video.genres as any).name
+                                ? (video.genres as any).name.toLowerCase().includes(query)
+                                : false);
+                        return titleMatch || genreMatch;
+                    });
+                    setSearchedMovies(filteredVideos);
+
+                    const randomMovie: Movie = movies[Math.floor(Math.random() * movies.length)];
+                    setFeaturedVideo(randomMovie);
+
+                    setRecentMovie(prev => movies.slice(0, 5));
+                    setPopularVideos(prev => filteredVideos.sort((a, b) => b.views - a.views));
+                    setTopRatedVideos(prev => filteredVideos.sort((a, b) => b.rating - a.rating));
+
+                }
+            }).catch(error => {
+                console.error('Error fetching movies:', error);
+                showSnackbar('Erreur lors de la récupération des films.');
+            });
+    }
+
+    function retireveAllGenres() {
+        api(apiRoutes.genres.list)
+            .then((genres: Genre[]) => {
+                setGenres(genres);
+            }
+            ).catch(error => {
+                console.error('Error fetching genres:', error);
+                showSnackbar('Erreur lors de la récupération des genres.');
+            });
+    }
+
+    function filterMovieByGenre(genreId: number) {
+        setSearchQuery(prev => '');
+        if (!moviesList) return;
+
+        // Filtrer les films qui contiennent le genre correspondant
+        const filteredMovies = moviesList.filter((movie) =>
+            movie.genres.some((genre) => genre.id === genreId)
+        );
+
+        // Mettre à jour l'état des films filtrés
+        setSearchedMovies(filteredMovies);
+    }
+    function filterMovieByName(){
+        let result : Movie[] = moviesList?.filter(movie =>
+            movie.title.toLowerCase().includes(searchQuery.toLowerCase())
+        ) || [];
+        setSearchedMovies(result);
+    }
+
     return (
         <Box sx={{ backgroundColor: 'background.default', minHeight: '100vh' }}>
-            <HeaderComponent />
+            <HeaderComponent setSearchMovie={setSearchQuery} />
 
-            {/* Hero Section */}
+            {moviesList && moviesList.length > 0 ? (
+                <>
+                    {/* Hero Section */}
+                    {featuredVideo && <Hero featuredVideo={featuredVideo} />}
 
-            <Hero featuredVideo={featuredVideo} />
-            
+                    {/* Genre Filter */}
+                    <Stack
+                        direction="row"
+                        spacing={1.5}
+                        sx={{
+                            overflowX: 'auto',
+                            bgcolor: '#14141f',
+                            p: 2,
+                            pl: 8,
+                            borderBottom: '1px solid rgba(255,255,255,0.1)',
+                            '&::-webkit-scrollbar': { display: 'none' },
+                        }}
+                    >
+                        {genres.map((genre) => (
+                            <Chip
+                                key={genre.id}
+                                label={genre.name}
+                                onClick={() => handleGenreSelect(genre)}
+                                sx={{
+                                    bgcolor: selectedGenre?.id === genre.id ? '#e50914' : '#222', // Rouge si sélectionné, sinon gris
+                                    color: selectedGenre?.id === genre.id ? 'white' : 'white', // Texte blanc dans les deux cas
+                                    cursor: 'pointer',
+                                    fontSize: '1rem',
+                                    fontWeight: 600,
+                                    py: 2,
+                                    px: 1.5,
+                                    borderRadius: '25px',
+                                    '&:hover': { bgcolor: '#e50914' },
+                                }}
+                            />
+                        ))}
+                    </Stack>
 
-            {/* Content Sections */}
-            <Container maxWidth="xl" sx={{ py: 6 }}>
-                {searchQuery ? (
-                    <MovieRow
-                        title={`Résultats pour "${searchQuery}"`}
-                        videos={filteredVideos}
-                        icon={<Search sx={{ fontSize: 32, color: 'primary.main' }} />}
-                    />
-                ) : (
-                    <>
-                        <MovieRow
-                            title="Récemment ajoutés"
-                            videos={recentVideos}
-                            icon={<AccessTime sx={{ fontSize: 32, color: 'primary.main' }} />}
-                        />
-                        <MovieRow
-                            title="Populaires"
-                            videos={popularVideos}
-                            icon={<Visibility sx={{ fontSize: 32, color: 'primary.main' }} />}
-                        />
-                        <MovieRow
-                            title="Mieux notés"
-                            videos={topRatedVideos}
-                            icon={<Star sx={{ fontSize: 32, color: '#ffd700' }} />}
-                        />
-                    </>
-                )}
-            </Container>
+                    {/* Content Sections */}
+                    <Container maxWidth="xl" sx={{ py: 6 }}>
+                        {searchQuery || selectedGenre ? (
+                            <MovieRow
+                                title={searchQuery ? `Résultats pour "${searchQuery}"` : `Films de genre "${selectedGenre?.name}"`}
+                                videos={searchedMovies}
+                                icon={<Search sx={{ fontSize: 32, color: 'primary.main' }} />}
+                            />
+                        ) : (
+                            <>
+                                <MovieRow
+                                    title="Récemment ajoutés"
+                                    videos={recentMovie ?? []}
+                                    icon={<AccessTime sx={{ fontSize: 32, color: 'primary.main' }} />}
+                                />
+                                <MovieRow
+                                    title="Populaires"
+                                    videos={popularVideos ?? []}
+                                    icon={<Visibility sx={{ fontSize: 32, color: 'primary.main' }} />}
+                                />
+                                <MovieRow
+                                    title="Mieux notés"
+                                    videos={topRatedVideos ?? []}
+                                    icon={<Star sx={{ fontSize: 32, color: '#ffd700' }} />}
+                                />
+                            </>
+                        )}
+                    </Container>
+                </>
+            ) : (
+                <Container maxWidth="xl" sx={{ py: 6 }}>
+                    <Box sx={{ color: 'text.primary' }}>Aucun film disponible pour le moment.</Box>
+                </Container>
+            )}
         </Box>
-    );
+    )
 };
