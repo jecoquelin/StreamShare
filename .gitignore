@@ -21,6 +21,7 @@ back/__pycache__/
 
 # Videos (si tu ne veux pas versionner les vidéos)
 videos/
+back/hls/
 
 # Scripts temporaires
 scripts/*.tmp
