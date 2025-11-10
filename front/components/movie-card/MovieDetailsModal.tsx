@@ -20,6 +20,7 @@ import {
 import {
 	PlayArrow,
 	Star,
+	StarOutline, 
 	Visibility,
 	Close,
 	AccessTime,
@@ -130,6 +131,20 @@ export default function MovieDetailsModal({ open, onClose, video, onPlay }: Movi
 								Regarder maintenant
 							</Button>
 						</Box>
+						<IconButton
+							onClick={() => {}}
+							sx={{
+								position: "absolute",
+								bottom: 24,
+								right: 24,
+								zIndex: 2,
+								backgroundColor: "rgba(0,0,0,0.5)",
+								color: "white",
+								"&:hover": { backgroundColor: "rgba(0,0,0,0.7)" }
+							}}
+						>
+							<StarOutline />
+						</IconButton>
 					</Box>
 
 					{/* Title Overlay */}

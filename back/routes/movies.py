@@ -5,7 +5,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from db import Movie
 from sqlalchemy.orm import Session
 from db.schemas.movie_schema import MovieRead
-from services.movie_service import get_all_movies, get_hls_playlist, get_hls_segment, get_movies_genre, get_position_service, update_position_service
+from services.movie_service import get_all_movies, get_hls_playlist, get_hls_segment, get_movies_genre, get_position_service, update_position_service, get_movies_in_favorite_service
 from db.session import get_db
 from services.auth_service import get_current_user
 router = APIRouter()
@@ -31,6 +31,19 @@ def get_movies_by_genre(id_genre: int, db: Session = Depends(get_db)):
     if not movies:
         raise HTTPException(status_code=404, detail="Aucun film trouvé pour ce genre")
     return [MovieRead.from_orm(movie) for movie in movies]
+
+@router.get("/movies/favorites/{id_user}")
+def get_movies_in_favorite(db: Session = Depends(get_db), id_user: int = None):
+    """
+    Récupère les films en favoris de l'utilisateur connecté.
+    """
+    if id_user is None:
+        raise HTTPException(status_code=400, detail="User ID is required")
+    moviesInFavourite = get_movies_in_favorite_service(db, id_user)
+    if not moviesInFavourite:
+        raise HTTPException(status_code=404, detail="Vous n'avez pas de films en favoris.")
+    return [MovieRead.from_orm(movie) for movie in moviesInFavourite]
+    pass
 
 @router.get("/movies/{movie_id}/hls/playlist")
 def get_movie_hls(movie_id: int, db: Session = Depends(get_db)):

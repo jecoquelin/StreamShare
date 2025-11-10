@@ -2,7 +2,7 @@ import json
 import os
 import sys
 from datetime import datetime
-from db.models.models import Role, User, Movie, Genre, WatchHistory, movie_genre_association
+from db.models.models import Role, User, Movie, Genre, WatchHistory, movie_genre_association, favorite_movie_association
 from db.session import SessionLocal
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -12,6 +12,7 @@ MOVIES_PATH = os.path.join(BASE_DIR, "scripts_db", "movies.json")
 GENRES_PATH = os.path.join(BASE_DIR, "scripts_db", "genres.json")
 MOVIES_GENRES_PATH = os.path.join(BASE_DIR, "scripts_db", "movies_genres.json")
 WATCH_HISTORY_PATH = os.path.join(BASE_DIR, "scripts_db", "watch_history.json")
+FAVORITES_MOVIES_PATH = os.path.join(BASE_DIR, "scripts_db", "favorites_movies.json")
 
 
 def init_db():
@@ -23,6 +24,7 @@ def init_db():
         add_genres(db)
         add_movies_genres(db)
         add_watch_history(db)
+        add_favorites_movies(db)
         db.commit()
         print("✅ DB seeded successfully.")  # noqa: T201
     except Exception as e:
@@ -174,6 +176,35 @@ def add_watch_history(db):
         db.commit()
         db.refresh(new_history)
         print(f"Watch history for User ID {new_history.user_id} and Movie ID {new_history.movie_id} added.")
+
+def add_favorites_movies(db):
+    if not os.path.exists(FAVORITES_MOVIES_PATH):
+        raise FileNotFoundError(f"Favorites movie file not found: {FAVORITES_MOVIES_PATH}")
+
+    with open(FAVORITES_MOVIES_PATH, encoding="utf-8") as file:
+        data = json.load(file)
+
+    for relation in data:
+        user_id = relation["user_id"]
+        movie_id = relation["movie_id"]
+
+        # Vérifiez si la relation existe déjà
+        existing_relation = db.execute(
+            favorite_movie_association.select().where(
+                favorite_movie_association.c.user_id == user_id,
+                favorite_movie_association.c.movie_id == movie_id
+            )
+        ).fetchone()
+
+        if existing_relation:
+            continue
+
+        db.execute(favorite_movie_association.insert().values(
+            user_id=user_id,
+            movie_id=movie_id
+        ))
+        db.commit()
+        print(f"Relation favorites_movies with User ID {user_id} and Movie ID {movie_id} added.")
 
 if __name__ == "__main__":
     init_db()

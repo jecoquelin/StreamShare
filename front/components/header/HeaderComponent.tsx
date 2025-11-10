@@ -21,16 +21,19 @@ import {
     Logout,
     Settings,
     History,
+    Star,
 } from '@mui/icons-material';
+
+import FavoritesPage from '../../pages/favorite-page';
+import router from 'next/router';
 
 interface Props {
     setSearchMovie: (query: string) => void;
 }
 
-export default function HeaderComponent({setSearchMovie}: Props) {
+export default function HeaderComponent({ setSearchMovie }: Props) {
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(null);
-    const isUserMenuOpen = Boolean(userMenuAnchor);
 
     const handleUserMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
         setUserMenuAnchor(event.currentTarget);
@@ -65,22 +68,55 @@ export default function HeaderComponent({setSearchMovie}: Props) {
                     alignItems="center"
                     sx={{ py: 2 }}
                 >
-                    {/* Logo */}
-                    <Stack direction="row" alignItems="center" spacing={2}>
-                        <PlayArrow sx={{ fontSize: 40, color: 'primary.main' }} />
-                        <Typography
-                            variant="h4"
+                    <Stack direction="row" alignItems="center" spacing={4}>
+                        <Stack direction="row" alignItems="center" spacing={2}>
+                            <PlayArrow sx={{ fontSize: 40, color: 'primary.main' }} />
+                            <Typography
+                                variant="h4"
+                                sx={{
+                                    fontWeight: 700,
+                                    background: 'linear-gradient(45deg, #ffffff 30%, #E50914 90%)',
+                                    backgroundClip: 'text',
+                                    WebkitBackgroundClip: 'text',
+                                    WebkitTextFillColor: 'transparent',
+                                }}
+                            >
+                                StreamShare
+                            </Typography>
+                        </Stack>
+
+                        <Button
                             sx={{
-                                fontWeight: 700,
-                                background: 'linear-gradient(45deg, #ffffff 30%, #E50914 90%)',
-                                backgroundClip: 'text',
-                                WebkitBackgroundClip: 'text',
-                                WebkitTextFillColor: 'transparent',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 0.5,
+                                position: 'relative',
+                                transition: 'all 0.3s ease',
+                                '&:hover': {
+                                    color: '#FFD700', // 👈 Texte en jaune
+                                    '& .star-icon': {
+                                        color: '#FFD700', // 👈 Étoile en jaune
+                                        filter: 'drop-shadow(0 0 8px #FFD700)',
+                                    },
+                                },
                             }}
+                            onClick={() => router.push('/favorite-page')}
                         >
-                            StreamShare
-                        </Typography>
+                            <Box component="span" sx={{ lineHeight: 1 }}>Vos favoris</Box>
+                            <Box sx={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                                <Star 
+                                    className="star-icon"
+                                    sx={{ 
+                                        fontSize: '1.25rem',
+                                        transition: 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                                        marginBottom: '3px',
+                                    }} 
+                                />  
+                            </Box>
+                        </Button>
                     </Stack>
+                    {/* Logo */}
+
 
                     {/* Search Bar */}
                     <Box sx={{ flexGrow: 1, maxWidth: 400, mx: 4 }}>
@@ -131,18 +167,18 @@ export default function HeaderComponent({setSearchMovie}: Props) {
                 </Stack>
             </Container>
         </Box>
-        <Menu
-            anchorEl={userMenuAnchor}
-            open={Boolean(userMenuAnchor)}
-            onClose={handleUserMenuClose}
-            sx={{
-                '& .MuiPaper-root': {
-                    backgroundColor: 'rgba(15, 15, 26, 0.95)',
-                    backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                },
-            }}
-        >
+            <Menu
+                anchorEl={userMenuAnchor}
+                open={Boolean(userMenuAnchor)}
+                onClose={handleUserMenuClose}
+                sx={{
+                    '& .MuiPaper-root': {
+                        backgroundColor: 'rgba(15, 15, 26, 0.95)',
+                        backdropFilter: 'blur(10px)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                    },
+                }}
+            >
                 <MenuItem onClick={handleUserMenuClose}>
                     <Settings sx={{ mr: 2 }} />
                     Paramètres
