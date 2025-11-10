@@ -1,0 +1,30 @@
+name: Feature Request
+description: Suggest a new feature or improvement.
+title: "[FEATURE] "
+labels: ["feature"]
+assignees:
+  - your-github-username
+
+body:
+  - type: dropdown
+    id: service
+    attributes:
+      label: Service
+      description: Feature for which service.
+      options:
+        - Mobile App
+        - CI/CD
+        - Other
+
+  - type: input
+    id: summary
+    attributes:
+      label: Feature Summary
+      description: Brief summary of the feature.
+      placeholder: Enter a concise feature description.
+
+  - type: textarea
+    id: details
+    attributes:
+      label: Feature Details
+      description: Provide details of the feature.

@@ -1,0 +1,45 @@
+name: General Task
+description: Propose a general task or question.
+title: "[TASK] "
+labels: ["task"]
+
+assignees:
+  - your-github-username
+
+body:
+  - type: dropdown
+    id: service
+    attributes:
+      label: Service
+      description: Which part of the project is this related to?
+      options:
+        - Mobile App
+        - CI/CD
+        - Other
+
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+      description: Provide a concise summary of the issue.
+      placeholder: Enter a short description.
+
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Provide a detailed description of the issue.
+      placeholder: Include context, screenshots, logs, etc.
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: What kind of issue is this?
+      options:
+        - Bug
+        - Feature Request
+        - Documentation
+        - Task
+        - Question
+        - Other

@@ -1,0 +1,44 @@
+name: Bug Report
+description: Report a bug in the project.
+
+title: "[BUG] "
+
+labels: ["bug"]
+assignees:
+  - your-github-username
+
+body:
+  - type: dropdown
+    id: service
+    attributes:
+      label: Service
+
+      description: Affected service.
+      options:
+        - Mobile App
+        - CI/CD
+        - Other
+
+  - type: input
+    id: summary
+    attributes:
+      label: Bug Summary
+
+      description: Brief description of the bug.
+      placeholder: Enter a concise bug description.
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to replicate the issue.
+      placeholder: |
+        1. Go to...
+        2. Click...
+        3. Observe...
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs and Screenshots
+      description: Paste logs or add screenshots.

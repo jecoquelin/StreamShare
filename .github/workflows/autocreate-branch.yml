@@ -1,0 +1,40 @@
+name: Auto create branch
+
+on:
+  issues:
+    types:
+      - opened
+
+jobs:
+  create-branch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Determine branch prefix
+        id: prefix
+        run: |
+          LABELS="${{ toJson(github.event.issue.labels) }}"
+          if [[ "$LABELS" == *"feature"* ]]; then
+            echo "prefix=feature" >> $GITHUB_OUTPUT
+          elif [[ "$LABELS" == *"bug"* ]]; then
+            echo "prefix=bugfix" >> $GITHUB_OUTPUT
+          else
+            echo "prefix=other" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create branch
+        run: |
+          BRANCH="${{ steps.prefix.outputs.prefix }}/issue-${{ github.event.issue.number }}"
+          git clone https://github.com/${{ github.repository }} repo
+          cd repo
+          git checkout -b "$BRANCH"
+          git push origin "$BRANCH"
+
+      - name: Comment branch on issue
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            ✅ Branche créée :  
+            \`${{ steps.prefix.outputs.prefix }}/issue-${{ github.event.issue.number }}\`
