@@ -20,3 +20,13 @@ export async function fetchMovieByGenre(id_genre: number) {
         console.error('Erreur lors de la récupération des genres :', error);
     }
 }
+
+export async function fetchFavoriteMovies(id_user: number) {
+    try {
+        const favoriteMovies = await api(apiRoutes.movies.favorite.list, {id_user : id_user}); // Appel à la route définie dans apiRoutes
+        console.log('Liste des movies favoris :', favoriteMovies);
+        return favoriteMovies;
+    } catch (error) {
+        console.error('Erreur lors de la récupération des movies favoris :', error);
+    }
+}

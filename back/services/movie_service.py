@@ -4,9 +4,8 @@ import os
 from sqlalchemy.orm import Session
 from db.models.models import Movie
 from db.schemas.movie_schema import MovieRead
-from db.models.models import WatchHistory  # Importer ici pour éviter les dépendances circulaires
+from db.models.models import WatchHistory, favorite_movie_association  # Importer ici pour éviter les dépendances circulaires
 from datetime import datetime
-
 
 # HLS_DIRECTORY = "/path/to/hls/files"  # Remplacez par le chemin réel où sont stockés vos fichiers HLS
 HLS_DIRECTORY = os.path.join(os.getcwd(), "hls")
@@ -70,3 +69,20 @@ def update_position_service(db: Session, user_id: int, movie_id: int, position: 
         )
         db.add(history)
     db.commit()
+
+def get_movies_in_favorite_service(db: Session, user_id: int) -> List[Movie]:
+    """
+    Récupère les films en favoris de l'utilisateur connecté.
+    """
+    
+    # On regarde si l'utilisateur a des favoris
+    query = db.query(Movie).join(
+        favorite_movie_association,
+        Movie.id == favorite_movie_association.c.movie_id
+    ).filter(
+        favorite_movie_association.c.user_id == user_id
+    )
+    favorite_movies = query.all()
+    
+    
+    return favorite_movies

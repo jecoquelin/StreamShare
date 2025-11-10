@@ -23,6 +23,9 @@ export const apiRoutes = {
         watchedPosition: {
             get: { method: 'GET', path: '/movie/{movie_id}/position' },
             update: { method: 'PUT', path: '/movie/{movie_id}/position' },
+        },
+        favorite: {
+            list: { method: 'GET', path: 'movies/favorites/{id_user}' },
         }
     },
     genres: {

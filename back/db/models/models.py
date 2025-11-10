@@ -12,6 +12,14 @@ movie_genre_association = Table(
     Column('genre_id', Integer, ForeignKey('genres.id'), primary_key=True),
 )
 
+# Table d'association pour la relation many-to-many entre User et Movie (favoris)
+favorite_movie_association = Table(
+    'favorites_movies',
+    Base.metadata,
+    Column('user_id', Integer, ForeignKey('users.id'), primary_key=True),
+    Column('movie_id', Integer, ForeignKey('movies.id'), primary_key=True),
+)
+
 class BaseModel(Base):
     __abstract__ = True
     id = Column(Integer, primary_key=True, autoincrement=True)
