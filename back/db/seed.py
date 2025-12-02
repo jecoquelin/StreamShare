@@ -2,7 +2,7 @@ import json
 import os
 import sys
 from datetime import datetime
-from db.models.models import Role, User, Movie, Genre, WatchHistory, movie_genre_association, favorite_movie_association
+from db.models.models import Collections, Role, User, Movie, Genre, WatchHistory, MovieActivity, movie_genre_association, favorite_movie_association
 from db.session import SessionLocal
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -13,6 +13,10 @@ GENRES_PATH = os.path.join(BASE_DIR, "scripts_db", "genres.json")
 MOVIES_GENRES_PATH = os.path.join(BASE_DIR, "scripts_db", "movies_genres.json")
 WATCH_HISTORY_PATH = os.path.join(BASE_DIR, "scripts_db", "watch_history.json")
 FAVORITES_MOVIES_PATH = os.path.join(BASE_DIR, "scripts_db", "favorites_movies.json")
+
+MOVIE_ACTIVITY_PATH = os.path.join(BASE_DIR, "scripts_db", "movie_activity.json")
+COLLECTION_ITEM_PATH = os.path.join(BASE_DIR, "scripts_db", "collection_items.json")
+COLLECTION_PATH = os.path.join(BASE_DIR, "scripts_db", "collections.json")
 
 
 def init_db():
@@ -25,6 +29,9 @@ def init_db():
         add_movies_genres(db)
         add_watch_history(db)
         add_favorites_movies(db)
+        add_movie_activity(db)
+        add_collections(db)
+        add_collection_items(db)
         db.commit()
         print("✅ DB seeded successfully.")  # noqa: T201
     except Exception as e:
@@ -205,6 +212,86 @@ def add_favorites_movies(db):
         ))
         db.commit()
         print(f"Relation favorites_movies with User ID {user_id} and Movie ID {movie_id} added.")
+
+def add_movie_activity(db):
+    if not os.path.exists(MOVIE_ACTIVITY_PATH):
+        raise FileNotFoundError(f"Movie Activity file not found: {MOVIE_ACTIVITY_PATH}")
+
+    with open(MOVIE_ACTIVITY_PATH, encoding="utf-8") as file:
+        data = json.load(file)
+
+    for activity in data:
+        if db.query(MovieActivity).filter_by(
+            user_id=activity["user_id"],
+            movie_id=activity["movie_id"]
+        ).first():
+            continue
+
+        new_activity = MovieActivity(
+            user_id=activity["user_id"],
+            movie_id=activity["movie_id"],
+            is_favorite=activity.get("is_favorite", False),
+            is_watched=activity.get("is_watched", False),
+            position_seconds=activity.get("position_seconds"),
+            last_watched_at=datetime.fromtimestamp(activity["last_watched_at"]) if activity.get("last_watched_at") else None
+        )
+        db.add(new_activity)
+        db.commit()
+        db.refresh(new_activity)
+        print(f"Movie activity for User ID {new_activity.user_id} and Movie ID {new_activity.movie_id} added.")
+        
+def add_collections(db):
+    if not os.path.exists(COLLECTION_PATH):
+        raise FileNotFoundError(f"Collection file not found: {COLLECTION_PATH}")
+
+    with open(COLLECTION_PATH, encoding="utf-8") as file:
+        data = json.load(file)
+
+    for collection in data:
+        if db.query(Collections).filter_by(
+            id=collection["id"]
+        ).first():
+            continue
+
+        new_collection = Collections(
+            id=collection["id"],
+            user_id=collection["user_id"],
+            name=collection["name"]
+        )
+        db.add(new_collection)
+        db.commit()
+        db.refresh(new_collection)
+        print(f"Collection {new_collection.name} added.")
+
+def add_collection_items(db):
+    if not os.path.exists(COLLECTION_ITEM_PATH):
+        raise FileNotFoundError(f"Collection Items file not found: {COLLECTION_ITEM_PATH}")
+
+    with open(COLLECTION_ITEM_PATH, encoding="utf-8") as file:
+        data = json.load(file)
+
+    for item in data:
+        collection_id = item["collection_id"]
+        movie_id = item["movie_id"]
+
+        # Vérifiez si la relation existe déjà
+        from db.models.models import collection_item_association
+        existing_relation = db.execute(
+            collection_item_association.select().where(
+                collection_item_association.c.collection_id == collection_id,
+                collection_item_association.c.movie_id == movie_id
+            )
+        ).fetchone()
+
+        if existing_relation:
+            continue
+
+        db.execute(collection_item_association.insert().values(
+            collection_id=collection_id,
+            movie_id=movie_id
+        ))
+        db.commit()
+        print(f"Movie ID {movie_id} added to Collection ID {collection_id}.")
 
 if __name__ == "__main__":
     init_db()

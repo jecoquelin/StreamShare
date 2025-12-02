@@ -7,18 +7,15 @@
 
 erDiagram
 
-    Users ||--o{ Role : allows
+    Users ||--o{ Roles : allows
+    Users }o--o{ UserMovie : "has"
+    Movies }o--o{ UserMovie : "is watched in"
+    
+    Genres }o--o{ Movies_Genres : "has"
+    Movies }o--o{ Movies_Genres : "has"
 
-    Users }o--o{ Watch_History : "has"
-    Movies }o--o{ Watch_History : "is watched in"
-
-    Genres }o--o{ movie_genre : "has"
-    Movies }o--o{ movie_genre : "has"
-
-    Users }o--o{ Favorite_Movie : "has"
-    Movies }o--o{ Favorite_Movie : "is watched in"
-
-    users {
+    %% Definition des tables
+    Users {
         int id PK "Unique identifier for the user"
         string(20) username "Username of the user"
         string(50) email "Email address of the user"
@@ -26,18 +23,21 @@ erDiagram
         int role FK "Foreign key referencing the user's role"
     }
     
-    roles {
+    Roles {
         int id PK "Unique identifier for the role"
         string(10) name "Name of the role"
     }
-    
-    watch_history {
+
+    UserMovie {
         int user_id PK "Unique identifier for the user (FK to Users)"
         int movie_id PK "Unique identifier for the movie (FK to Movies)"
-        int position_seconds "The position in seconds where the user left off"
+        boolean is_favorite "Boolean to put this film in favorite or no"
+        boolean is_watched "Boolean to put this film in watched"
+        int position_seconds "The position in seconds where the user left off. This field can be null"
+        timestamp last_watched_at "Date where the user last wacthed the film"
     }
 
-    movies {
+    Movies {
         int id PK "Unique identifier for the movie"
         string(255) title "Title of the movie"
         string(255) thumbnail "Thumbnail image of the movie"
@@ -49,19 +49,25 @@ erDiagram
         string description "Brief description of the movie"
     }
 
-    movies_genres {
+    Movies_Genres {
         int movie_id PK "Unique identifier for the movie (FK to Movies)"
         int genre_id PK "Unique identifier for the genre (FK to Genres)"
     }
 
-    genres {
+    Genres {
         int id PK "Unique identifier for the genre"
         string(100) name "Name of the genre"
     }
 
-    favorites_movies {
-        int user_id PK "Unique identifier for the user (FK to Users)"
-        int movie_id PK "Unique identifier for the movie (FK to Movies)"
+    Collections {
+        int id PK "Unique identifier for the collection"
+        int user_id FK "Foreign key referencing the user id"
+        string name "Name of the collection"
     }
 
+    Collection_items {
+        int collection_id PK "FK to collections"
+        int movie_id PK "FK to movies"
+    }
 ```
+
