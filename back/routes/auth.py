@@ -17,14 +17,16 @@ def login(response: Response, payload: LoginRequest, db: Session = Depends(get_d
         raise HTTPException(status_code=400, detail="Incorrect email or password")
     
     response = JSONResponse({"message": "Login successful"})
+    print('Setting cookie with token:', token)  # Debugging line
     response.set_cookie(
         key="token",
         value=token,
         httponly=True,
-        secure=True,
-        samesite="strict",
+        secure=False,  # False en dev pour HTTP, True en prod pour HTTPS
+        samesite="lax",  # "lax" au lieu de "strict" pour permettre les redirections
         path="/",
-        max_age=60 * 60 * 24 * 7
+        max_age=60 * 60 * 24 * 7,
+        domain=None  # ✅ Ajoutez ceci pour localhost
     )
     return response
 

@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from datetime import datetime
 from .user_schema import UserBase
 from .movie_schema import MovieBase
+from typing import Optional
 
 class WatchHistoryBase(BaseModel):
     user_id: int
