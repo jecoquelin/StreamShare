@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
-import { useRouter } from "next/router";
+import { usePathname, useRouter } from "next/navigation"; // ← Changement ici
 import { useAuth } from "@/models/store/AuthStore";
 
 interface AuthMiddlewareProps {
@@ -9,29 +9,42 @@ interface AuthMiddlewareProps {
 
 const AuthMiddleware: React.FC<AuthMiddlewareProps> = ({ children }) => {
   const router = useRouter();
+  const pathname = usePathname(); // ← Utiliser usePathname au lieu de router.pathname
   const { user, loading } = useAuth();
   
-  const publicRoutes = ["/", "/register", "/about"];
+  const publicRoutes = ["/"];
 
   useEffect(() => {
-    const isPublicRoute = publicRoutes.includes(router.pathname);
+    if (loading) return; // Ne rien faire pendant le chargement
     
-    if (!loading) {
-      // Si l'utilisateur n'est PAS connecté et qu'il est sur une route protégée
-      if (!user && !isPublicRoute) {
-        router.push("/");
-      }
-      
-      // Si l'utilisateur EST connecté et qu'il est sur la page d'accueil
-      // L'utilisateur est redirigé vers la page principale
-      if (user && router.pathname === "/") {
-        router.push("/home"); 
-      }
+    const isPublicRoute = publicRoutes.includes(pathname);
+    
+    if (!user && !isPublicRoute) {
+      router.replace("/");
+    } else if (user && (pathname === "/")) {
+      router.replace("/home");
     }
-  }, [user, loading, router.pathname]); // Ajoute router.pathname aux dépendances
+  }, [user, loading, router]);
 
-  if (loading) return <p>Chargement...</p>;
-  
+  // Afficher un loader pendant la vérification
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p>Chargement...</p>
+      </div>
+    );
+  }
+
+  // Bloquer l'affichage des pages protégées si non authentifié
+  const isPublicRoute = publicRoutes.includes(pathname);
+  if (!user && !isPublicRoute) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p>Redirection...</p>
+      </div>
+    );
+  }
+
   return <>{children}</>;
 };
 

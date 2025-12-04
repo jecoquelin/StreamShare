@@ -1,14 +1,35 @@
 from typing import List, Optional
+from db.schemas.genre_schema import GenreBase
+from services.favorite_service import get_favorite_movie_ids
 from sqlalchemy.orm import Session
 from db.models.models import Movie
 from db.schemas.movie_schema import MovieRead
 
-def get_all_movies(db: Session) -> List[MovieRead]:
+def get_all_movies(db: Session, user_id: Optional[int] = None) -> List[MovieRead]:
     """
     Récupère tous les films de la base de données.
     """
     movies = db.query(Movie).all()
-    return [MovieRead.from_orm(movie) for movie in movies]
+    favorite_ids = get_favorite_movie_ids(db, user_id) if user_id else set()
+    
+    print(f"favorite_ids : {favorite_ids}")
+    
+    return [
+        MovieRead(
+            id=movie.id,
+            title=movie.title,
+            thumbnail=movie.thumbnail,
+            duration_second=movie.duration_second,
+            rating=movie.rating,
+            year=movie.year,
+            views=movie.views,
+            director=movie.director,
+            description=movie.description,
+            isFavorite=movie.id in favorite_ids,
+            genres=[GenreBase.from_orm(genre) for genre in movie.genres]  # ← Ajouter genres
+        )
+        for movie in movies
+    ]
 
 def get_movie_by_id(db: Session, movie_id: int) -> Optional[Movie]:
     """

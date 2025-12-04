@@ -47,8 +47,12 @@ class MovieToCollection(BaseModel):
     
     
 @router.get("/movies", response_model=List[MovieRead])
-def list_movies(db: Session = Depends(get_db)):
-    return get_all_movies(db)
+def list_movies(db: Session = Depends(get_db), current_user: UserBase = Depends(get_current_user)):
+    """
+    Récupère tous les films.
+    """
+    user_id = current_user.id if current_user else None
+    return get_all_movies(db, user_id)
 
 @router.get("/movies/genre/{id_genre}")
 def list_movies_by_genre(id_genre: int, db: Session = Depends(get_db)):
@@ -122,43 +126,43 @@ def update_position(
 
 # === Routes pour la gestion des favoris ===
 
-@router.post("/movies/{movie_id}/favorite", status_code=status.HTTP_201_CREATED)
-def add_to_favorites(
-    movie_id: int,
-    current_user: UserBase = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    """
-    Ajoute un film aux favoris de l'utilisateur.
-    """
-    try:
-        add_movie_to_favorites(db, current_user.id, movie_id)
-        return JSONResponse(status_code=status.HTTP_201_CREATED, content={"message": "Film ajouté aux favoris"})
-    except Exception as e:
-        print(f"Erreur lors de l'ajout aux favoris: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Impossible d'ajouter le film aux favoris"
-        )
+# @router.post("/movies/{movie_id}/favorite", status_code=status.HTTP_201_CREATED)
+# def add_to_favorites(
+#     movie_id: int,
+#     current_user: UserBase = Depends(get_current_user),
+#     db: Session = Depends(get_db)
+# ):
+#     """
+#     Ajoute un film aux favoris de l'utilisateur.
+#     """
+#     try:
+#         add_movie_to_favorites(db, current_user.id, movie_id)
+#         return JSONResponse(status_code=status.HTTP_201_CREATED, content={"message": "Film ajouté aux favoris"})
+#     except Exception as e:
+#         print(f"Erreur lors de l'ajout aux favoris: {e}")
+#         raise HTTPException(
+#             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#             detail="Impossible d'ajouter le film aux favoris"
+#         )
 
-@router.delete("/movies/{movie_id}/favorite", status_code=status.HTTP_200_OK)
-def remove_from_favorites(
-    movie_id: int,
-    current_user: UserBase = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    """
-    Retire un film des favoris de l'utilisateur.
-    """
-    try:
-        remove_movie_from_favorites(db, current_user.id, movie_id)
-        return JSONResponse(status_code=status.HTTP_200_OK, content={"message": "Film retiré des favoris"})
-    except Exception as e:
-        print(f"Erreur lors du retrait des favoris: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Impossible de retirer le film des favoris"
-        )
+# @router.delete("/movies/{movie_id}/favorite", status_code=status.HTTP_200_OK)
+# def remove_from_favorites(
+#     movie_id: int,
+#     current_user: UserBase = Depends(get_current_user),
+#     db: Session = Depends(get_db)
+# ):
+#     """
+#     Retire un film des favoris de l'utilisateur.
+#     """
+#     try:
+#         remove_movie_from_favorites(db, current_user.id, movie_id)
+#         return JSONResponse(status_code=status.HTTP_200_OK, content={"message": "Film retiré des favoris"})
+#     except Exception as e:
+#         print(f"Erreur lors du retrait des favoris: {e}")
+#         raise HTTPException(
+#             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#             detail="Impossible de retirer le film des favoris"
+#         )
 
 # === Routes pour l'historique de visionnage ===
 
