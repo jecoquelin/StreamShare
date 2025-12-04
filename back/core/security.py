@@ -9,9 +9,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def verify_password(plain_password, hashed_password):
-    print(f"Verifying password: {plain_password} against hash: {hashed_password}")  # Debugging line
     result = pwd_context.verify(plain_password, hashed_password)
-    print(f"Password verification result: {result}")  # Debugging line
     return result
 
 def get_password_hash(password):
@@ -24,5 +22,4 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 def decode_access_token(token: str):
-    print('Decoding token:', token)  # Debugging line
     return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])

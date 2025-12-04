@@ -25,9 +25,9 @@ export const apiRoutes = {
             update: { method: 'PUT', path: '/movie/{movie_id}/position' },
         },
         favorite: {
-            list: { method: 'GET', path: '/movies/favorites' },
-            add: { method: 'POST', path: '/movie/{movie_id}/favorite' },
-            remove: { method: 'DELETE', path: '/movie/{movie_id}/favorite' },
+            list: { method: 'GET', path: 'movies/favorites' },
+            add: { method: 'POST', path: '/api/favorites/addmovies/{movie_id}' },
+            remove: { method: 'POST', path: '/api/favorites/removemovies/{movie_id}' },
         }
     },
     collections: {

@@ -12,6 +12,7 @@ class MovieBase(BaseModel):
     views: Optional[int] = 0
     director: Optional[str] = None
     description: Optional[str] = None
+    isFavorite: Optional[bool] = False
     
     class Config:
         orm_mode = True
