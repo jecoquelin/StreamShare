@@ -27,7 +27,6 @@ export default function LandingPage() {
     const [popularVideos, setPopularVideos] = useState<Movie[]>();
     const [topRatedVideos, setTopRatedVideos] = useState<Movie[]>();
     const { user, loading } = useAuth();
-    console.log('Authenticated user:', user);
 
     const handleUserMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
         setUserMenuAnchor(event.currentTarget);
@@ -115,71 +114,72 @@ export default function LandingPage() {
     return (
         <div className="bg-[#0a0a0f] min-h-screen">
             <HeaderComponent setSearchMovie={setSearchQuery} />
+            {loading ? (
+                <div className="max-w-[1920px] mx-auto py-12 px-4 sm:px-6 lg:px-8">
+                    <div className="text-white">Chargement...</div>
+                </div>
+            ) : (
+                moviesList && moviesList.length > 0 ? (
+                    <>
+                        {/* Hero Section */}
+                        {featuredVideo && <Hero featuredVideo={featuredVideo} />}
 
-            {moviesList && moviesList.length > 0 ? (
-                <>
-                    {/* Hero Section */}
-                    {featuredVideo && <Hero featuredVideo={featuredVideo} />}
-
-                    {/* Genre Filter */}
-                    <ScrollArea className="w-full">
-                        <div className="flex gap-3 bg-[#14141f] p-4 pl-8 border-b border-white/10 overflow-x-auto scrollbar-hide">
-                            {genres.map((genre) => (
-                                <motion.button
-                                    key={genre.id}
-                                    onClick={() => handleGenreSelect(genre)}
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    className={`px-6 py-2 rounded-full text-base font-semibold whitespace-nowrap transition-colors ${
-                                        selectedGenre?.id === genre.id
+                        {/* Genre Filter */}
+                        <ScrollArea className="w-full">
+                            <div className="flex gap-3 bg-[#14141f] p-4 pl-8 border-b border-white/10 overflow-x-auto scrollbar-hide">
+                                {genres.map((genre) => (
+                                    <motion.button
+                                        key={genre.id}
+                                        onClick={() => handleGenreSelect(genre)}
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        className={`px-6 py-2 rounded-full text-base font-semibold whitespace-nowrap transition-colors ${selectedGenre?.id === genre.id
                                             ? 'bg-[#e50914] text-white'
                                             : 'bg-[#222] text-white hover:bg-[#e50914]'
-                                    }`}
-                                >
-                                    {genre.name}
-                                </motion.button>
-                            ))}
-                        </div>
-                    </ScrollArea>
+                                            }`}
+                                    >
+                                        {genre.name}
+                                    </motion.button>
+                                ))}
+                            </div>
+                        </ScrollArea>
 
-                    {/* Content Sections */}
+                        {/* Content Sections */}
+                        <div className="max-w-[1920px] mx-auto py-12 px-4 sm:px-6 lg:px-8">
+                            {searchQuery || selectedGenre ? (
+                                <MovieRow
+                                    title={searchQuery ? `Résultats pour "${searchQuery}"` : `Films de genre "${selectedGenre?.name}"`}
+                                    videos={searchedMovies}
+                                    icon={<Search className="w-8 h-8 text-[#e50914]" />}
+                                />
+                            ) : (
+                                <>
+                                    <MovieRow
+                                        title="Récemment ajoutés"
+                                        videos={recentMovie ?? []}
+                                        icon={<Clock className="w-8 h-8 text-[#e50914]" />}
+                                    />
+                                    <MovieRow
+                                        title="Populaires"
+                                        videos={popularVideos ?? []}
+                                        icon={<Eye className="w-8 h-8 text-[#e50914]" />}
+                                    />
+                                    <MovieRow
+                                        title="Mieux notés"
+                                        videos={topRatedVideos ?? []}
+                                        icon={<Star className="w-8 h-8 text-[#ffd700]" />}
+                                    />
+                                </>
+                            )}
+                        </div>
+                    </>
+                ) : (
                     <div className="max-w-[1920px] mx-auto py-12 px-4 sm:px-6 lg:px-8">
-                        {searchQuery || selectedGenre ? (
-                            <MovieRow
-                                title={searchQuery ? `Résultats pour "${searchQuery}"` : `Films de genre "${selectedGenre?.name}"`}
-                                videos={searchedMovies}
-                                icon={<Search className="w-8 h-8 text-[#e50914]" />}
-                            />
-                        ) : (
-                            <>
-                                <MovieRow
-                                    title="Récemment ajoutés"
-                                    videos={recentMovie ?? []}
-                                    icon={<Clock className="w-8 h-8 text-[#e50914]" />}
-                                />
-                                <MovieRow
-                                    title="Populaires"
-                                    videos={popularVideos ?? []}
-                                    icon={<Eye className="w-8 h-8 text-[#e50914]" />}
-                                />
-                                <MovieRow
-                                    title="Mieux notés"
-                                    videos={topRatedVideos ?? []}
-                                    icon={<Star className="w-8 h-8 text-[#ffd700]" />}
-                                />
-                            </>
-                        )}
+                        <div className="text-white">Aucun film disponible pour le moment.</div>
                     </div>
-                </>
-            ) : (
-                <div className="max-w-[1920px] mx-auto py-12 px-4 sm:px-6 lg:px-8">
-                    <div className="text-white">Aucun film disponible pour le moment.</div>
-                </div>
+                )
             )}
         </div>
     );
 }
 
-function useAuthUser(): [any] {
-    throw new Error('Function not implemented.');
-}
