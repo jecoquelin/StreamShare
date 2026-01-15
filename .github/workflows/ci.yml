@@ -10,22 +10,21 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '20' #Any node version
-          cache: 'npm' 
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: front/package-lock.json
 
       - name: Install dependencies
-        workspace: ./front
-        run: npm ci
+        working-directory: ./front
+        run: npm install
 
       - name: Build application
-        workspace: ./front
+        working-directory: ./front
         run: npm run build
         env:
           CI: true
-
-    
