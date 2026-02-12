@@ -2,7 +2,10 @@ name: Next.js CI
 
 on:
   pull_request:
+    paths:
+      - 'front/**'
   workflow_dispatch:
+  
 
 jobs:
   build:
